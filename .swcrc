@@ -1,0 +1,18 @@
+{
+  "jsc": {
+    "target": "es2020",
+    "baseUrl": "./src",
+    "paths": {},
+    "parser": {
+      "syntax": "typescript",
+      "tsx": false,
+      "dynamicImport": true
+    },
+    "transform": {
+      "optimizer": {}
+    }
+  },
+  "module": {
+    "type": "es6"
+  }
+}

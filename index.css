@@ -1,0 +1,205 @@
+:root {
+  --fg-color-1: oklch(0.8 4% 90);
+  --fg-color-2: oklch(0.9 12% 90);
+  --fg-color-3: oklch(0.6 0% 90);
+  --fg-color-10: oklch(0.9 0% 0);
+  --fg-color-100: oklch(0.35 0% 0);
+  --i-fg-color-1: oklch(0.25 4% 90);
+  --bg-color-1: oklch(0.25 0% 0);
+  --bg-color-2: oklch(0.30 0% 0);
+}
+
+body {
+  margin: 0;
+}
+
+body, .sur-bg {
+  background-color: var(--bg-color-1);
+}
+
+.header {
+  padding-top: 8px;
+}
+
+.sur-fg {
+  color: var(--fg-color-1);
+}
+
+.sur-fg-1 {
+  color: var(--fg-color-10);
+}
+
+.typo-s-h1 {
+  font-size: 1.4rem;
+}
+
+.typo-s-h2 {
+  font-size: 1.2rem;
+}
+
+.typo-s-h3 { /** todo: remove when unused */
+  font-size: 1rem;
+}
+
+.typo-s-h4 {
+  font-size: 0.9rem;
+}
+
+.typo-s-h5 {
+  font-size: 0.8rem;
+}
+
+.typo-s-h6 {
+  font-size: 0.7rem;
+}
+
+.typo-s-ital {
+  font-style: italic;
+}
+
+.typo-s-lite {
+  font-weight: 200;
+}
+
+.typo-s-bold {
+  font-weight: 600;
+}
+
+.sur-d-fg {
+  color: var(--i-fg-color-1);
+}
+
+.box-1 {
+  padding-top: 4px;
+  border-top: 1px solid var(--fg-color-100);
+}
+
+.sur-2 {
+  background-color: var(--bg-color-2);
+}
+
+.svg-node-bg {
+  fill: oklch(0.9 8% 128);
+}
+
+.svg-node-fg {
+  stroke: oklch(0.9 4% 128);
+  stroke-width: 2px;
+}
+
+.svg-label-fg {
+  fill: oklch(0.25 4% 90);
+}
+
+.svg-label-fnt-s {
+  font-size: 12px;
+}
+
+.sur-typo {
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.sur-typo-sub {
+  font-family: "Noto Sans Display", Arial, sans-serif;
+}
+
+.sur-typo-mono {
+  font-family: "Hack", monospace;
+}
+
+.act-fg {
+  color: var(--fg-color-3);
+}
+
+.sel-fg {
+  color: var(--fg-color-2);
+}
+
+.rout-pnl {
+  display: inline-block;
+  padding: 8px;
+  margin: 0 4px;
+  border-bottom: 2px solid transparent;
+}
+
+.rout-activ {
+  border-bottom: 2px solid var(--fg-color-2);
+}
+
+.lnk-crsr {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.lnk-crsr:hover {
+  color: var(--fg-color-2);
+}
+
+.no-m-intx {
+  pointer-events: none;
+}
+
+.svg-scl-aspx {
+  width: 100%;
+  max-width: 1024px;
+}
+
+.scl-suprt {
+  max-width: 1024px;
+  margin: 0 auto;
+}
+
+.box-about {
+  padding: 0 1.4rem;
+}
+
+/** @ */
+@font-face {
+  font-family: 'Hack';
+  src: url('./assets/fonts/hack-regular.woff2') format('woff2'),
+  url('./assets/fonts/hack-regular.woff') format('woff'),
+  url('./assets/fonts/hack-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./assets/fonts/inter-regular.woff2') format('woff2'),
+  url('./assets/fonts/inter-regular.woff') format('woff'),
+  url('./assets/fonts/inter-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('assets/fonts/inter-extralight.woff2') format('woff2'),
+  url('assets/fonts/inter-extralight.woff') format('woff'),
+  url('./assets/fonts/inter-extralight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Inter';
+  src: url('./assets/fonts/inter-bold.woff2') format('woff2'),
+  url('./assets/fonts/inter-bold.woff') format('woff'),
+  url('./assets/fonts/inter-bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans Display';
+  src: url('./assets/fonts/notosansdisplay-regular.woff2') format('woff2'),
+  url('./assets/fonts/notosansdisplay-regular.woff') format('woff'),
+  url('./assets/fonts/notosansdisplay-regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}

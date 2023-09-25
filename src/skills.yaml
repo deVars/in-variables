@@ -1,0 +1,100 @@
+skills:
+  - text: typescript
+    sub:
+      - text: React
+        sub: []
+      - text: SPA
+        sub:
+        - text: forms
+          sub:
+          - text: formik
+        - text: visualizations
+          sub:
+          - text: react-table
+            sub: []
+          - text: d3.js
+            sub: []
+        - text: routing
+          sub:
+          - text: reach-router
+      - text: javascript
+        sub: []
+      - text: CSS-in-JS
+      - text: NodeJS
+        sub:
+        - text: Express
+          sub: []
+  - text: CSS3
+    sub: []
+  - text: python
+    sub: []
+  - text: databases
+    sub:
+    - text: Apache Spark
+      sub: []
+    - text: MySQL
+      sub: []
+    - text: PostgresQL
+      sub: []
+    - text: graphQL
+      sub:
+      - text: Apollo
+        sub: []
+      - text: Hasura
+        sub: []
+  - text: software testing
+    sub:
+    - text: TDD
+      sub: []
+    - text: BDD
+      sub: []
+    - text: Jasmine
+      sub: []
+    - text: Jest
+      sub: []
+    - text: Cypress
+      sub: []
+  - text: packaging/ automation
+    sub:
+    - text: git
+      sub: []
+    - text: nginx
+      sub: [ ]
+    - text: webpack
+      sub: []
+    - text: rollup
+      sub: []
+    - text: esbuild
+      sub: [ ]
+    - text: swc
+      sub: []
+    - text: Google Closure Compiler
+      sub: []
+    - text: CI/CD
+      sub:
+      - text: Jenkins
+        sub: []
+      - text: Spinnaker
+        sub: []
+      - text: GitHub Actions
+        sub: []
+  - text: containerization
+    sub:
+    - text: Docker
+      sub: []
+    - text: Kubernetes
+      sub: []
+    - text: HCL (terraform)
+      sub: []
+  - text: Google Cloud Platform
+    sub:
+    - text: dataproc
+      sub: []
+    - text: bigquery
+      sub: []
+    - text: pubsub
+      sub: []
+    - text: GKE
+      sub: []
+    - text: cloud functions
+      sub: []

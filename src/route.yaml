@@ -1,0 +1,12 @@
+about:
+  label: 'About'
+  path: '/about'
+work:
+  label: 'Work History'
+  path: '/work'
+skill:
+  label: 'Skills'
+  path: '/skills'
+project:
+  label: 'Projects'
+  path: '/projects'

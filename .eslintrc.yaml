@@ -1,0 +1,107 @@
+root: true
+env:
+  browser: true
+  node: true
+plugins:
+  - '@typescript-eslint'
+  - import
+  - jest
+  - jsx-a11y
+parser: '@typescript-eslint/parser'
+extends:
+  - eslint:recommended
+  - plugin:import/recommended
+  - plugin:jsx-a11y/recommended
+  - plugin:jest/recommended
+  - plugin:@typescript-eslint/recommended
+  - airbnb-base
+rules:
+  array-bracket-spacing:
+  - error
+  - always
+  comma-dangle:
+  - error
+  - always-multiline
+  default-case:
+  - error
+  - commentPattern: no default
+  function-paren-newline:
+  - error
+  - consistent
+  jsx-quotes:
+  - error
+  - prefer-single
+  no-bitwise:
+  - off
+  no-console:
+  - error
+  - allow:
+    - warn
+    - error
+    - info
+  no-extra-boolean-cast: # prefer clear distinction between non-native boolean for type strictness
+  - off
+  no-shadow: # turned off because of @typescript-eslint override
+  - off
+  no-unused-vars: # turned off because of @typescript-eslint override
+  - off
+  no-use-before-define: # turned off because of @typescript-eslint override
+  - off
+  object-curly-newline:
+  - error
+  - ImportDeclaration: never
+  object-property-newline:
+  - off
+  import/extensions:
+  - error
+  - ignorePackages
+  - js: always  # better detection if we're doing es2020
+    jsx: never
+    ts: ignorePackages
+    tsx: never
+  import/named:  # disabled in typescript
+  - off
+  import/no-absolute-path:  # disabled in es2020
+  - off
+  import/no-extraneous-dependencies:
+  - error
+  - devDependencies:
+    - '**/*.stories.tsx'
+  import/no-unresolved:
+  - error
+  - ignore:
+    - '^https?'
+    - '.jsx?$'
+  import/prefer-default-export:
+  - warn
+  jsx-a11y/label-has-associated-control:
+  - error
+  - controlComponents:
+    - textarea
+  '@typescript-eslint/explicit-module-boundary-types':
+  - error
+  '@typescript-eslint/no-shadow':
+  - warn
+  '@typescript-eslint/no-unused-vars':
+  - error
+  - argsIgnorePattern: '^_'
+    destructuredArrayIgnorePattern: '^_'
+    ignoreRestSiblings: true
+  '@typescript-eslint/no-use-before-define':
+  - error
+  - functions: false
+    classes: true
+settings:
+  import/resolver:
+    node:
+      extensions:
+      - .js
+      - .jsx
+      - .ts
+      - .tsx
+overrides:
+  - files:
+    - '*.ts'
+    - '*.tsx'
+    rules:
+      no-undef: off
