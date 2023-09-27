@@ -14,8 +14,9 @@ function view({
     m('.header.sur-2', [
       m('.scl-suprt', [
         m('.header-main.sur-fg-1', [
-          m('.title.typo-s-h1', 'in Variables'),
-          m('.title-sub.sur-typo-sub.typo-s-h4', "Roseller's personal page of sorts"),
+          m('.title.typo-s-h1', 'in・Variables'),
+          m('.title-sub.sur-typo-sub.typo-s-h4',
+            "Roseller's personal page of sorts"),
         ]),
         m('.header-contact', [
           m('a.contact-email.lnk-crsr.sur-typo-mono.act-typo.typo-s-h5.typo-s-bold.act-fg',

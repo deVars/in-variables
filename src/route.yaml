@@ -2,8 +2,8 @@ about:
   label: 'About'
   path: '/about'
 work:
-  label: 'Work History'
-  path: '/work'
+  label: 'Journey'
+  path: '/journey'
 skill:
   label: 'Skills'
   path: '/skills'
