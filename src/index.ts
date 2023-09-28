@@ -8,6 +8,12 @@ import { getAttributeModel, getStrictAttributeModel } from './models/AttributeMo
 import { appendSkillTree } from './views/SkillForceTree.helper.js';
 import getAboutView from './views/About.js';
 
+declare global {
+  interface Window {
+    friconix_update: () => void;
+  }
+}
+
 m.render(document.body, m('.sur-bg.sur-fg.sur-typo', 'loading'));
 
 getRoute().then((route) => {

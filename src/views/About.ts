@@ -5,15 +5,29 @@ export default function getAboutView(): m.Component {
 }
 
 function view() {
-  return m('.box-about.box-sur-1.typo-s-h1', [
-    m('img.scl-suprt-img.about-img', { src: '../../assets/images/about-1.png', loading: 'lazy' }),
-    m('p.typo-s-ctr', 'I like thought experiments,'),
-    m('img.scl-suprt-img.about-img', { src: '../../assets/images/about-2.png', loading: 'lazy' }),
-    m('p.typo-s-ctr.typo-s-ital', '"what-ifs",'),
-    m('img.scl-suprt-img.about-img', { src: '../../assets/images/about-3.png', loading: 'lazy' }),
-    m('p.typo-s-ctr', 'mental maps,'),
-    m('img.scl-suprt-img.about-img', { src: '../../assets/images/about-4.png', loading: 'lazy' }),
-    m('p.typo-s-ctr', 'iteration and natural progression.'),
-    m('img.scl-suprt-img.about-img', { src: '../../assets/images/about-5.png', loading: 'lazy' }),
-  ]);
+  const assetsRoot = '../../assets/images';
+  const aboutLabels = [
+    { label: 'I like thought experiments,', isItalic: false },
+    { label: '"what-if"s,', isItalic: true },
+    { label: 'mental maps,', isItalic: false },
+    { label: 'iteration, and natural progression', isItalic: false },
+  ];
+
+  return m('.box-about.box-sur-1.typo-s-h1',
+    aboutLabels.map(
+      ({ label, isItalic }, index) => ([
+        m('img.scl-suprt-img.about-img', {
+          src: `${assetsRoot}/about-${index}.png`,
+          loading: 'lazy',
+        }),
+        m(`p.typo-s-ctr${!isItalic ? '' : '.typo-s-ital'}`, label),
+      ]),
+    )
+      .flat()
+      .concat([
+        m('img.scl-suprt-img.about-img', {
+          src: '../../assets/images/about-4.png',
+          loading: 'lazy',
+        }),
+      ]));
 }

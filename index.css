@@ -168,6 +168,14 @@ body, .sur-bg {
   width: 100%;
 }
 
+.dsp-flex {
+  display: flex;
+}
+
+.flx-s-b {
+  justify-content: space-between;
+}
+
 /** @ */
 @font-face {
   font-family: 'Hack';
