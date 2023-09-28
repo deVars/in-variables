@@ -14,13 +14,15 @@ function view({
     m('.header.sur-2', [
       m('.scl-suprt', [
         m('.main.sur-fg-1.dsp-flex.flx-s-b', [
-          m('.title.typo-s-h1', 'in・Variables'),
-          m('.controls', [
-            m('a.contact-email.lnk-crsr.sur-typo-mono.act-typo.typo-s-h5.typo-s-bold.act-fg',
-              { href: 'mailto:ross.is.hire.able036@passinbox.com' },
-              [
-                m('i.fi-xnlxxm-close-envelope.typo-s-h1.dsp-flex'),
-              ]),
+          m('section.title.typo-s-h1', 'in・Variables'),
+          m('section.controls', [
+            m('.box-ctrl', [
+              m('a.contact-email.lnk-crsr.sur-typo-mono.act-typo.typo-s-h5.typo-s-bold.act-fg',
+                { href: 'mailto:ross.is.hire.able036@passinbox.com' },
+                [
+                  m('i.fi-xnlxxm-close-envelope.typo-s-h1.dsp-flex'),
+                ]),
+            ]),
           ]),
         ]),
         m('.header-sub.sur-typo-sub.typo-s-h4',

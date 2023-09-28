@@ -21,6 +21,11 @@ body, .sur-bg {
   padding-top: 8px;
 }
 
+.controls {
+  border-left: 1px solid var(--fg-color-100);
+  margin: 0 2rem 0 4rem;
+}
+
 .sur-fg {
   color: var(--fg-color-1);
 }
@@ -77,6 +82,11 @@ body, .sur-bg {
   padding-top: 4px;
   border-top: 1px solid var(--fg-color-100);
 }
+
+.box-ctrl {
+  margin-left: 1rem;
+}
+
 
 .sur-2 {
   background-color: var(--bg-color-2);
