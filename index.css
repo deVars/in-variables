@@ -6,7 +6,8 @@
   --fg-color-100: oklch(0.35 0% 0);
   --i-fg-color-1: oklch(0.25 4% 90);
   --bg-color-1: oklch(0.25 0% 0);
-  --bg-color-2: oklch(0.30 0% 0);
+  --bg-color-2: oklch(0.275 0% 0);
+  --bg-color-3: oklch(0.30 0% 0);
 }
 
 body {
@@ -32,6 +33,10 @@ body, .sur-bg {
 
 .sur-fg-1 {
   color: var(--fg-color-10);
+}
+
+.sur-fg-100 {
+  color: var(--fg-color-100);
 }
 
 .typo-s-h1 {
@@ -87,9 +92,12 @@ body, .sur-bg {
   margin-left: 1rem;
 }
 
-
 .sur-2 {
   background-color: var(--bg-color-2);
+}
+
+.sur-3 {
+  background-color: var(--bg-color-3);
 }
 
 .svg-node-bg {
@@ -127,6 +135,18 @@ body, .sur-bg {
 
 .sel-fg {
   color: var(--fg-color-2);
+}
+
+.pad-1-0 {
+  padding: 1.0rem;
+}
+
+.mgn-l-0-5 {
+  margin-left: 0.5rem;
+}
+
+.mgn-b-0-5 {
+  margin-bottom: 0.5rem;
 }
 
 .rout-pnl {
@@ -167,6 +187,18 @@ body, .sur-bg {
 
 .box-about {
   padding: 4rem 1.4rem 2rem 1.4rem;
+}
+
+.box-work {
+  margin: 0.5em 2em 3em 3.5em;
+}
+
+.journal-entry {
+  cursor: default;
+}
+
+.journal-entry:hover {
+  background-color: var(--bg-color-3);
 }
 
 .about-img {

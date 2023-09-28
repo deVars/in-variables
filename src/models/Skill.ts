@@ -1,6 +1,6 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 
-const skillListPath = './skills.yaml';
+const skillListPath = './static/skills.yaml';
 
 export interface Skill {
   list: SkillEntry[];

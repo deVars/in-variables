@@ -5,7 +5,7 @@ export interface RouteEntry {
   path: string;
 }
 
-const routePath = './route.yaml';
+const routePath = './static/route.yaml';
 export default async function getRoute(): Promise<Record<string, RouteEntry>> {
   const routeYamlBlob = await m.request<string>(routePath, {
     responseType: 'text',

@@ -7,6 +7,10 @@ import getLayout from './views/Layout.js';
 import { getAttributeModel, getStrictAttributeModel } from './models/AttributeModel.js';
 import { appendSkillTree } from './views/SkillForceTree.helper.js';
 import getAboutView from './views/About.js';
+import getJourneyView, { type JourneyView } from './views/Journey.js';
+import type { JourneyEntry } from './models/Journey.js';
+import { getInitialJourneyEntries } from './models/Journey.js';
+import getAttributionView from './views/Attribution.js';
 
 declare global {
   interface Window {
@@ -20,8 +24,11 @@ getRoute().then((route) => {
   const layout = getLayout();
   const skillView = getSkillView();
   const aboutView = getAboutView();
+  const journeyView = getJourneyView();
+  const attributionView = getAttributionView();
   const skills = getStrictAttributeModel<SkillEntry[]>([]);
   const root = getAttributeModel<HierarchyNode<SkillEntry>>(null);
+  const journeyEntries = getStrictAttributeModel<JourneyEntry[]>([]);
 
   m.route.prefix = '#';
   m.route(document.body, route.about.path, {
@@ -29,21 +36,25 @@ getRoute().then((route) => {
       render: () => m(layout, { route }, m(aboutView)),
     },
     [route.skill.path]: {
-      render: () => m(
-        layout,
-        { route },
-        m(skillView, {
-          skills, root,
-          oninit: skillViewOnInit,
-          onupdate: appendSkillTree,
-        }),
-      ),
+      render: () => m(layout, { route }, m(skillView, {
+        skills, root,
+        oninit: skillViewOnInit,
+        onupdate: appendSkillTree,
+      })),
     },
     [route.work.path]: {
-      render: () => m(layout, { route }, m('.text', 'Hello')),
+      render: () => m(layout, { route }, m(journeyView, {
+        journeyEntries,
+        oninit: journeyViewOnInit,
+      })),
     },
     [route.project.path]: {
-      render: () => m(layout, { route }, m('.text', 'Lorem Ipsum Bacon Bacon')),
+      render: () => m(layout, { route }, m('.wip.box-work', {}, [
+        m('.sur-2.pad-1-0', 'This section is a work in progress'),
+      ])),
+    },
+    [route.attribution.path]: {
+      render: () => m(layout, { route }, m(attributionView)),
     },
   });
 
@@ -52,6 +63,12 @@ getRoute().then((route) => {
       skills.set(skillList);
       const data: SkillEntry = { text: 'skills', sub: skillList };
       root.set(hierarchy(data, (d: SkillEntry) => d.sub));
+    });
+  }
+
+  function journeyViewOnInit({ attrs: { journeyEntries } }: m.Vnode<JourneyView>) {
+    getInitialJourneyEntries().then((entries) => {
+      journeyEntries.set(entries);
     });
   }
 });

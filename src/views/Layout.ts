@@ -7,11 +7,11 @@ export default function getLayout(): m.Component<{route: Record<string, RouteEnt
 
 function view({
   attrs, children,
-}: m.Vnode<{route: Record<string, RouteEntry>}>): m.Children {
+}: m.Vnode<{route: Record<string, RouteEntry>}>) {
   const { route } = attrs;
 
   return m('.sur-bg.sur-fg.sur-typo', [
-    m('.header.sur-2', [
+    m('.header.sur-3', [
       m('.scl-suprt', [
         m('.main.sur-fg-1.dsp-flex.flx-s-b', [
           m('section.title.typo-s-h1', 'in・Variables'),
