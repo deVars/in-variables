@@ -15,17 +15,23 @@ function view({ attrs: { journeyEntries } }: m.Vnode<JourneyView>) {
     return m('.loading');
   }
 
+  const entries = journeyEntries.value.map(
+    ({ role, employer, location,
+      empStartMonth, empStartYear, empEndMonth, empEndYear }) => (
+      m('.journal-entry.sur-2.pad-1-0.mgn-b-0-5', [
+        m('.role.typo-s-h2', role),
+        m('.company.typo-s-h4', employer),
+        m('.location.typo-s-h4.sur-typo-sub', location),
+        m('.employ-dates.typo-s-h4.sur-typo-sub',
+          `${empStartYear}/ ${empStartMonth} – ${empEndYear}/ ${empEndMonth}`),
+      ])
+    ),
+  );
+
   return m('.box-work',
-    journeyEntries.value.map(
-      ({ role, employer, location,
-        empStartMonth, empStartYear, empEndMonth, empEndYear }) => (
-        m('.journal-entry.sur-2.pad-1-0.mgn-b-0-5', [
-          m('.role.typo-s-h2', role),
-          m('.company.typo-s-h4', employer),
-          m('.location.typo-s-h4.sur-typo-sub', location),
-          m('.employ-dates.typo-s-h4.sur-typo-sub',
-            `${empStartYear}/ ${empStartMonth} – ${empEndYear}/ ${empEndMonth}`),
-        ])
-      ),
-    ));
+    [
+      m('.journal-entry.sur-2.pad-1-0.mgn-b-0-5', [
+        m('.role.typo-s-h2', '「 ...to be decided 」'),
+      ]),
+    ].concat(entries));
 }
