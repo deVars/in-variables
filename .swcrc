@@ -6,13 +6,14 @@
     "parser": {
       "syntax": "typescript",
       "tsx": false,
-      "dynamicImport": true
+      "dynamicImport": true,
     },
     "transform": {
-      "optimizer": {}
+      "optimizer": {},
     }
   },
   "module": {
-    "type": "es6"
-  }
+    "type": "es6",
+  },
+  "minify": true,
 }
