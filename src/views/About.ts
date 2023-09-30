@@ -10,7 +10,7 @@ function view() {
     { label: 'I like thought experiments,', isItalic: false },
     { label: '"what-if"s,', isItalic: true },
     { label: 'mental maps,', isItalic: false },
-    { label: 'iteration, and natural progression', isItalic: false },
+    { label: 'iteration, and natural progression.', isItalic: false },
   ];
 
   return m('.box-about.box-sur-1.typo-s-h1',

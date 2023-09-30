@@ -7,6 +7,7 @@ export interface SkillView {
   skills: StrictAttributeModel<SkillEntry[]>;
   root: AttributeModel<HierarchyNode<SkillEntry>>;
 }
+
 export default function getSkillView(): m.Component<SkillView> {
   return { view };
 }

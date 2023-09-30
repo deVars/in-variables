@@ -1,7 +1,8 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
+import getIcon from './FriconixIcon.js';
 
 export default function getAttributionView(): m.Component {
-  return { view, oncreate: window.friconix_update };
+  return { view };
 }
 
 function view() {
@@ -24,7 +25,9 @@ function view() {
             target: '_blank',
           }, [
             m('', 'https://friconix.com/'),
-            m('i.fi-xnlxxm-external-link.typo-s-h4.dsp-flex.mgn-l-0-5'),
+            m('i.fi-xnlxxm-external-link.typo-s-h4.dsp-flex.mgn-l-0-5', [
+              m(getIcon(), { iconName: 'external-link', optionsMask: 'xnlxxm' }),
+            ]),
           ]),
         ]),
       ]),
