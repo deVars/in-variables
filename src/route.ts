@@ -5,6 +5,8 @@ export interface RouteEntry {
   path: string;
 }
 
+export const routeUnlistedActionLabel = '[UNLISTED]';
+
 const routePath = './static/route.yaml';
 export default async function getRoute(): Promise<Record<string, RouteEntry>> {
   const routeYamlBlob = await m.request<string>(routePath, {

@@ -10,7 +10,21 @@ export interface JourneyEntry {
   empEndYear: number;
   empStartMonth: number;
   empEndMonth: number;
+  features: string[];
 }
+
+export const tbdJourneyId = 1000;
+
+export const tbdEntry: JourneyEntry = {
+  role: '「 ...to be decided 」',
+  employer: 'N/A',
+  location: 'N/A',
+  empStartYear: 0,
+  empEndYear: 0,
+  empStartMonth: 0,
+  empEndMonth: 0,
+  features: [],
+};
 
 export async function getInitialJourneyEntries(): Promise<JourneyEntry[]> {
   const [ { parse }, journeyYamlBlob ] = await Promise.all([

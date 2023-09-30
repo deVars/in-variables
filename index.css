@@ -2,6 +2,7 @@
   --fg-color-1: oklch(0.8 2% 90);
   --fg-color-2: oklch(0.9 12% 90);
   --fg-color-3: oklch(0.6 2% 90);
+  --fg-color-4: oklch(0.6 8% 33);
   --fg-color-10: oklch(0.9 0% 0);
   --fg-color-100: oklch(0.35 0% 0);
   --i-fg-color-1: oklch(0.25 4% 90);
@@ -141,8 +142,20 @@ body, .sur-bg {
   padding: 1.0rem;
 }
 
+.pad-0-5 {
+  padding: 0.5rem;
+}
+
+.mgn-t-0-5 {
+  margin-top: 0.5rem;
+}
+
 .mgn-l-0-5 {
   margin-left: 0.5rem;
+}
+
+.mgn-r-0-5 {
+  margin-right: 0.5rem;
 }
 
 .mgn-b-0-5 {
@@ -194,11 +207,27 @@ body, .sur-bg {
 }
 
 .journal-entry {
-  cursor: default;
+  cursor: pointer;
 }
 
 .journal-entry:hover {
   background-color: var(--bg-color-3);
+}
+
+.box-fg-100 {
+  border-color: var(--fg-color-100)
+}
+
+.box-rad-0-5 {
+  border-radius: 0.5rem;
+}
+
+.box-wd-1 {
+  border-width: 1px;
+}
+
+.box-s-s {
+  border-style: solid;
 }
 
 .about-img {
@@ -216,6 +245,48 @@ body, .sur-bg {
 
 .flx-s-b {
   justify-content: space-between;
+}
+
+.flx-a-c {
+  align-items: center;
+}
+
+.flx-rap {
+  flex-wrap: wrap;
+}
+
+.vert-aln-mid {
+  vertical-align: middle;
+}
+
+.svg-s-t {
+  width: 0.33em;
+  height: 0.33em;
+}
+
+.svg-s-s {
+  width: 0.5em;
+  height: 0.5em;
+}
+
+.svg-s-n {
+  width: 1em;
+  height: 1em;
+}
+
+.svg-s-l {
+  width: 1.33em;
+  height: 1.33em;
+}
+
+.svg-s-x {
+  width: 1.66em;
+  height: 1.66em;
+}
+
+.svg-s-h {
+  width: 2em;
+  height: 2em;
 }
 
 /** @ */
