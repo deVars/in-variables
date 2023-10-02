@@ -95,14 +95,12 @@ function getTBDView(listPath: string) {
         ]),
       ]),
       m('.sur-2.pad-1-0', [
-        m('.mgn-b-0-5', '"There was rarely an obvious branching point in a person\'s life.  People changed slowly over time.'),
-        m('.mgn-l-0-5.mgn-b-0-5', 'You didn\'t take one step, then find yourself in a completely new location.'),
-        m('.mgn-l-0-5.mgn-b-0-5', 'You first took a little step off the path to avoid some rocks.'),
-        m('.mgn-b-0-5', 'For a while, you walked alongside the path, but then you wandered out a little way to step on softer soil. Then you stopped paying attention as you drifted farther and farther away.'),
-        m('.mgn-b-0-5', 'Finally, you found yourself in the wrong city, wondering why the signs on the roadway hadn\'t led you better."'),
+        m('.mgn-b-0-5', '"To get through the hardest journey,'),
+        m('.mgn-l-0-5.mgn-b-0-5', 'we need to take only'),
+        m('.mgn-l-0-5.mgn-b-0-5', 'one step at a time ―'),
+        m('.mgn-b-0-5', 'but we must keep on stepping."'),
         m('', [
-          m('span', '― Brandon Sanderson, '),
-          m('span.typo-s-ital', 'The Emperor\'s Soul'),
+          m('span', '― Chinese Proverb'),
         ]),
       ]),
     ]);
