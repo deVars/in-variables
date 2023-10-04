@@ -21,7 +21,8 @@ function view({ attrs: { journeyEntries, onclick } }: m.Vnode<JourneyView>) {
   const entries = journeyEntries.value.map(
     ({ role, employer, location,
       empStartMonth, empStartYear, empEndMonth, empEndYear }, index) => (
-      m('.journal-entry.sur-2.pad-1-0.mgn-b-0-5', {
+      m('.box-brdr-l', []),
+      m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5', {
         onclick: () => onclick(index),
       }, [
         m('.role.typo-s-h2', role),
@@ -31,13 +32,13 @@ function view({ attrs: { journeyEntries, onclick } }: m.Vnode<JourneyView>) {
           ]),
           m('.mgn-l-0-5', employer),
         ]),
-        m('.location.typo-s-h4.sur-typo-sub.dsp-flex', [
+        m('.location.typo-s-h4.typo-sub.dsp-flex', [
           m('i.fi-xnlxxm-map-marker-solid.dsp-flex', [
             m(getIcon(), { iconName: 'map-marker-solid', optionsMask: 'xnlxxm' }),
           ]),
           m('.mgn-l-0-5', location),
         ]),
-        m('.employ-dates.typo-s-h4.sur-typo-sub.dsp-flex', [
+        m('.employ-dates.typo-s-h4.typo-sub.dsp-flex', [
           m('i.fi-xnlxxm-calendar.dsp-flex', [
             m(getIcon(), { iconName: 'calendar', optionsMask: 'xnlxxm' }),
           ]),
@@ -47,9 +48,9 @@ function view({ attrs: { journeyEntries, onclick } }: m.Vnode<JourneyView>) {
     ),
   );
 
-  return m('.box-work',
+  return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0',
     [
-      m('.journal-entry.sur-2.pad-1-0.mgn-b-0-5', [
+      m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5', [
         m('.role.typo-s-h2', {
           onclick: () => onclick(tbdJourneyId),
         }, '「 ...to be decided 」'),

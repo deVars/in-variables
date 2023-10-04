@@ -1,3 +1,8 @@
+@import url('./styles/box.css');
+@import url('./styles/friconix-svg.css');
+@import url('./styles/pad.css');
+@import url('./styles/typo.css');
+
 :root {
   --fg-color-1: oklch(0.8 2% 90);
   --fg-color-2: oklch(0.9 12% 90);
@@ -13,26 +18,68 @@
 
 body {
   margin: 0;
-}
-
-body, .sur-bg {
   background-color: var(--bg-color-1);
 }
 
-.header {
-  padding-top: 8px;
+.link {
+  cursor: pointer;
+  text-decoration: none;
 }
 
-.controls {
-  border-left: 1px solid var(--fg-color-100);
-  margin: 0 2rem 0 4rem;
+.link:hover {
+  color: var(--fg-color-2);
 }
 
-.sur-fg {
-  color: var(--fg-color-1);
+.link-card {
+  cursor: pointer;
+}
+
+.link-card:hover {
+  background-color: var(--bg-color-3);
+}
+
+.wid-max {
+  max-width: 1024px;
+}
+
+.wid-fl {
+  width: 100%;
+}
+
+.dsp-i-b {
+  display: inline-block;
+}
+
+.dsp-flex {
+  display: flex;
+}
+
+
+.sur-bg-1 {
+  background-color: var(--bg-color-1);
+}
+
+.sur-bg-2 {
+  background-color: var(--bg-color-2);
+}
+
+.sur-bg-3 {
+  background-color: var(--bg-color-3);
 }
 
 .sur-fg-1 {
+  color: var(--fg-color-1);
+}
+
+.sur-fg-2 {
+  color: var(--fg-color-2);
+}
+
+.sur-fg-3 {
+  color: var(--fg-color-3);
+}
+
+.sur-fg-10 {
   color: var(--fg-color-10);
 }
 
@@ -40,65 +87,8 @@ body, .sur-bg {
   color: var(--fg-color-100);
 }
 
-.typo-s-h1 {
-  font-size: 1.4rem;
-}
-
-.typo-s-h2 {
-  font-size: 1.2rem;
-}
-
-.typo-s-h3 { /** todo: remove when unused */
-  font-size: 1rem;
-}
-
-.typo-s-h4 {
-  font-size: 0.9rem;
-}
-
-.typo-s-h5 {
-  font-size: 0.8rem;
-}
-
-.typo-s-h6 {
-  font-size: 0.7rem;
-}
-
-.typo-s-ctr {
-  text-align: center;
-}
-
-.typo-s-ital {
-  font-style: italic;
-}
-
-.typo-s-lite {
-  font-weight: 200;
-}
-
-.typo-s-bold {
-  font-weight: 600;
-}
-
 .sur-d-fg {
   color: var(--i-fg-color-1);
-}
-
-.box-1 {
-  padding-top: 4px;
-  border-top: 1px solid var(--fg-color-100);
-}
-
-.box-ctrl {
-  margin-left: 1rem;
-}
-
-.sur-2 {
-  background-color: var(--bg-color-2);
-}
-
-.sur-3 {
-  background-color: var(--bg-color-3);
 }
 
 .svg-node-bg {
@@ -118,70 +108,6 @@ body, .sur-bg {
   font-size: 12px;
 }
 
-.sur-typo {
-  font-family: "Inter", Arial, sans-serif;
-}
-
-.sur-typo-sub {
-  font-family: "Noto Sans Display", Arial, sans-serif;
-}
-
-.sur-typo-mono {
-  font-family: "Hack", monospace;
-}
-
-.act-fg {
-  color: var(--fg-color-3);
-}
-
-.sel-fg {
-  color: var(--fg-color-2);
-}
-
-.pad-1-0 {
-  padding: 1.0rem;
-}
-
-.pad-0-5 {
-  padding: 0.5rem;
-}
-
-.mgn-t-0-5 {
-  margin-top: 0.5rem;
-}
-
-.mgn-l-0-5 {
-  margin-left: 0.5rem;
-}
-
-.mgn-r-0-5 {
-  margin-right: 0.5rem;
-}
-
-.mgn-b-0-5 {
-  margin-bottom: 0.5rem;
-}
-
-.rout-pnl {
-  display: inline-block;
-  padding: 8px;
-  margin: 0 4px;
-  border-bottom: 2px solid transparent;
-}
-
-.rout-activ {
-  border-bottom: 2px solid var(--fg-color-2);
-}
-
-.lnk-crsr {
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.lnk-crsr:hover {
-  color: var(--fg-color-2);
-}
-
 .no-m-intx {
   pointer-events: none;
 }
@@ -193,43 +119,6 @@ body, .sur-bg {
   height: calc(100vh - 110px);
 }
 
-.scl-suprt {
-  max-width: 1024px;
-  margin: 0 auto;
-}
-
-.box-about {
-  padding: 4rem 1.4rem 2rem 1.4rem;
-}
-
-.box-work {
-  margin: 0.5em 2em 3em 3.5em;
-}
-
-.journal-entry {
-  cursor: pointer;
-}
-
-.journal-entry:hover {
-  background-color: var(--bg-color-3);
-}
-
-.box-fg-100 {
-  border-color: var(--fg-color-100)
-}
-
-.box-rad-0-5 {
-  border-radius: 0.5rem;
-}
-
-.box-wd-1 {
-  border-width: 1px;
-}
-
-.box-s-s {
-  border-style: solid;
-}
-
 .about-img {
   box-shadow: black 2px 10px 15px;
 }
@@ -237,10 +126,6 @@ body, .sur-bg {
 .scl-suprt-img {
   object-fit: contain;
   width: 100%;
-}
-
-.dsp-flex {
-  display: flex;
 }
 
 .flx-s-b {
@@ -257,36 +142,6 @@ body, .sur-bg {
 
 .vert-aln-mid {
   vertical-align: middle;
-}
-
-.svg-s-t {
-  width: 0.33em;
-  height: 0.33em;
-}
-
-.svg-s-s {
-  width: 0.5em;
-  height: 0.5em;
-}
-
-.svg-s-n {
-  width: 1em;
-  height: 1em;
-}
-
-.svg-s-l {
-  width: 1.33em;
-  height: 1.33em;
-}
-
-.svg-s-x {
-  width: 1.66em;
-  height: 1.66em;
-}
-
-.svg-s-h {
-  width: 2em;
-  height: 2em;
 }
 
 /** @ */

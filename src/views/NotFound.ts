@@ -10,7 +10,7 @@ export default function getNotFound(): m.Component<WithHomePath> {
 }
 
 function view({ attrs: { homePath } }: m.Vnode<WithHomePath>) {
-  return m('.box-work.sur-2.pad-1-0', [
+  return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0.sur-bg-2.pad-1-0', [
     m('.dsp-flex.flx-a-c.typo-s-h1', [
       m('i.fi-tnlxxl-warning-solid.dsp-flex', [
         m(getIcon(), { iconName: 'warning-solid', optionsMask: 'tnlxxl' }),
@@ -18,11 +18,11 @@ function view({ attrs: { homePath } }: m.Vnode<WithHomePath>) {
       m('.box-ctrl', '404: Page Not Found'),
     ]),
     m('hr.sur-fg-100'),
-    m('.sur-typo-sub', [
+    m('.typo-sub', [
       m('span', 'The page requested cannot be found.  Double check if there is a typo or you can '),
       m(m.route.Link, {
         href: homePath,
-        selector: 'span.lnk-crsr.act-fg',
+        selector: 'span.link.sur-fg-3',
       }, 'return home'),
       m('span', '.'),
     ]),

@@ -21,7 +21,7 @@ declare global {
   }
 }
 
-m.render(document.body, m('.sur-bg.sur-fg.sur-typo', 'loading'));
+m.render(document.body, m('.sur-bg-1.sur-fg-1.typo-std', 'loading'));
 
 getRoute().then((route) => {
   const layout = getLayout();
@@ -56,8 +56,8 @@ getRoute().then((route) => {
       })),
     },
     [route.project.path]: {
-      render: () => m(layout, { route }, m('.wip.box-work', {}, [
-        m('.sur-2.pad-1-0', 'This section is a work in progress'),
+      render: () => m(layout, { route }, m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0', {}, [
+        m('.sur-bg-2.pad-1-0', 'This section is a work in progress'),
       ])),
     },
     [route.attribution.path]: {

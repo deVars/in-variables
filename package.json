@@ -25,6 +25,7 @@
     "eslint-plugin-jest": "~26",
     "eslint-plugin-jsx-a11y": "~6",
     "jest": "~28",
+    "lightningcss-cli": "~1.22.0",
     "typescript": "~5.1",
     "yaml": "~2"
   }

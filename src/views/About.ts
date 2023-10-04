@@ -13,7 +13,7 @@ function view() {
     { label: 'iteration, and natural progression.', isItalic: false },
   ];
 
-  return m('.box-about.box-sur-1.typo-s-h1',
+  return m('.pad-t-4-0.pad-l-2-0.pad-r-2-0.pad-b-3-0.box-sur-1.typo-s-h1',
     aboutLabels.map(
       ({ label, isItalic }, index) => ([
         m('img.scl-suprt-img.about-img', {

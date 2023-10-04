@@ -1,0 +1,51 @@
+.typo-std {
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.typo-sub {
+  font-family: "Noto Sans Display", Arial, sans-serif;
+}
+
+.typo-mono {
+  font-family: "Hack", monospace;
+}
+
+.typo-s-h1 {
+  font-size: 1.4rem;
+}
+
+.typo-s-h2 {
+  font-size: 1.2rem;
+}
+
+.typo-s-h3 { /** todo: remove when unused */
+  font-size: 1rem;
+}
+
+.typo-s-h4 {
+  font-size: 0.9rem;
+}
+
+.typo-s-h5 {
+  font-size: 0.8rem;
+}
+
+.typo-s-h6 {
+  font-size: 0.7rem;
+}
+
+.typo-s-ctr {
+  text-align: center;
+}
+
+.typo-s-ital {
+  font-style: italic;
+}
+
+.typo-s-lite {
+  font-weight: 200;
+}
+
+.typo-s-bold {
+  font-weight: 600;
+}

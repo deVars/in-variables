@@ -1,0 +1,39 @@
+.box-w-2 {
+  border-width: 2px;
+}
+
+.box-w-1-0 {
+  border-width: 1px;
+}
+
+.box-s-s {
+  border-style: solid;
+}
+
+.box-l-s-s {
+  border-left-style: solid;
+}
+
+.box-t-s-s {
+  border-top-style: solid;
+}
+
+.box-b-s-s {
+  border-bottom-style: solid;
+}
+
+.box-c-t {
+  border-color: transparent;
+}
+
+.box-c-2 {
+  border-color: var(--fg-color-2);
+}
+
+.box-c-100 {
+  border-color: var(--fg-color-100);
+}
+
+.box-rad-0-5 {
+  border-radius: 0.5rem;
+}
