@@ -10,6 +10,8 @@
   --fg-color-4: oklch(0.6 8% 33);
   --fg-color-10: oklch(0.9 0% 0);
   --fg-color-100: oklch(0.35 0% 0);
+  --fg-color-101: oklch(0.275 0% 0); /** surface 2 for borders */
+  --fg-color-102: oklch(0.9 12% 90);
   --i-fg-color-1: oklch(0.25 4% 90);
   --bg-color-1: oklch(0.25 0% 0);
   --bg-color-2: oklch(0.275 0% 0);
@@ -35,6 +37,19 @@ body {
 }
 
 .link-card:hover {
+  background-color: var(--bg-color-3);
+}
+
+.link-card-b-101-102 {
+  cursor: pointer;
+  border-color: var(--fg-color-101);
+}
+
+.link-card-b-101-102:hover {
+  border-color: var(--fg-color-102);
+}
+
+.link-card-b-101-102:hover > .link-card {
   background-color: var(--bg-color-3);
 }
 

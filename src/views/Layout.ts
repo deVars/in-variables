@@ -15,7 +15,7 @@ function view({
       m('.wid-max.mgn-cntr', [
         m('.sur-fg-10.dsp-flex.flx-s-b', [
           m('section.typo-s-h1', 'in・Variables'),
-          m('section.mgn-0.mgn-l-4-0.mgn-r-2-0.box-w-1-0.box-l-s-s.box-c-100', [
+          m('section.mgn-0.mgn-l-4-0.mgn-r-2-0.box-w-1.box-l-s-s.box-c-100', [
             m('.mgn-l-2-0', [
               m('a.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3',
                 { href: 'mailto:ross.is.hire.able036@passinbox.com' },
@@ -41,7 +41,7 @@ function view({
     ]),
     m('.content', [
       m('.wid-max.mgn-cntr', [
-        m('section.pad-t-0-25.box-w-1-0.box-t-s-s.box-c-100', children),
+        m('section.pad-t-0-25.box-w-1.box-t-s-s.box-c-100', children),
       ]),
     ]),
   ]);

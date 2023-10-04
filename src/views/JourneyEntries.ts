@@ -21,28 +21,29 @@ function view({ attrs: { journeyEntries, onclick } }: m.Vnode<JourneyView>) {
   const entries = journeyEntries.value.map(
     ({ role, employer, location,
       empStartMonth, empStartYear, empEndMonth, empEndYear }, index) => (
-      m('.box-brdr-l', []),
-      m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5', {
+      m('.link-card-b-101-102.box-l-s-s.box-w-8.pad-l-0-5', {
         onclick: () => onclick(index),
       }, [
-        m('.role.typo-s-h2', role),
-        m('.company.typo-s-h4.dsp-flex', [
-          m('i.fi-xnsxxm-building.dsp-flex', [
-            m(getIcon(), { iconName: 'building', optionsMask: 'xnsxxm' }),
+        m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5', [
+          m('.role.typo-s-h2', role),
+          m('.company.typo-s-h4.dsp-flex', [
+            m('i.fi-xnsxxm-building.dsp-flex', [
+              m(getIcon(), { iconName: 'building', optionsMask: 'xnsxxm' }),
+            ]),
+            m('.mgn-l-0-5', employer),
           ]),
-          m('.mgn-l-0-5', employer),
-        ]),
-        m('.location.typo-s-h4.typo-sub.dsp-flex', [
-          m('i.fi-xnlxxm-map-marker-solid.dsp-flex', [
-            m(getIcon(), { iconName: 'map-marker-solid', optionsMask: 'xnlxxm' }),
+          m('.location.typo-s-h4.typo-sub.dsp-flex', [
+            m('i.fi-xnlxxm-map-marker-solid.dsp-flex', [
+              m(getIcon(), { iconName: 'map-marker-solid', optionsMask: 'xnlxxm' }),
+            ]),
+            m('.mgn-l-0-5', location),
           ]),
-          m('.mgn-l-0-5', location),
-        ]),
-        m('.employ-dates.typo-s-h4.typo-sub.dsp-flex', [
-          m('i.fi-xnlxxm-calendar.dsp-flex', [
-            m(getIcon(), { iconName: 'calendar', optionsMask: 'xnlxxm' }),
+          m('.employ-dates.typo-s-h4.typo-sub.dsp-flex', [
+            m('i.fi-xnlxxm-calendar.dsp-flex', [
+              m(getIcon(), { iconName: 'calendar', optionsMask: 'xnlxxm' }),
+            ]),
+            m('.mgn-l-0-5', `${empStartYear}/ ${empStartMonth} – ${empEndYear}/ ${empEndMonth}`),
           ]),
-          m('.mgn-l-0-5', `${empStartYear}/ ${empStartMonth} – ${empEndYear}/ ${empEndMonth}`),
         ]),
       ])
     ),
@@ -50,10 +51,12 @@ function view({ attrs: { journeyEntries, onclick } }: m.Vnode<JourneyView>) {
 
   return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0',
     [
-      m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5', [
-        m('.role.typo-s-h2', {
-          onclick: () => onclick(tbdJourneyId),
-        }, '「 ...to be decided 」'),
+      m('.link-card-b-101-102.box-l-s-s.box-w-8.pad-l-0-5', {
+        onclick: () => onclick(tbdJourneyId),
+      }, [
+        m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5', [
+          m('.role.typo-s-h2', '「 ...to be decided 」'),
+        ]),
       ]),
     ].concat(entries));
 }

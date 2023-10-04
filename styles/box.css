@@ -1,8 +1,12 @@
+.box-w-8 {
+  border-width: 8px;
+}
+
 .box-w-2 {
   border-width: 2px;
 }
 
-.box-w-1-0 {
+.box-w-1 {
   border-width: 1px;
 }
 
@@ -32,6 +36,10 @@
 
 .box-c-100 {
   border-color: var(--fg-color-100);
+}
+
+.box-c-101 {
+  border-color: var(--fg-color-101);
 }
 
 .box-rad-0-5 {

@@ -61,7 +61,7 @@ function view({ attrs: { journeyEntry, homePath, listPath } }: m.Vnode<JourneyDe
       ]),
       m('.sur-bg-2.pad-1-0.typo-mono.typo-s-h6', [
         m('.dsp-flex.flx-rap', journeyEntry.value.features.map(
-          (feature) => m('.box-c-100.box-rad-0-5.box-w-1-0.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
+          (feature) => m('.box-c-100.box-rad-0-5.box-w-1.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
         )),
       ]),
     ]);
