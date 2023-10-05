@@ -4,8 +4,8 @@ export default function getAboutView(): m.Component {
   return { view };
 }
 
+const assetsRoot = '../../assets/images';
 function view() {
-  const assetsRoot = '../../assets/images';
   const aboutLabels = [
     { label: 'I like thought experiments,', isItalic: false },
     { label: '"what-if"s,', isItalic: true },
