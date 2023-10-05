@@ -56,9 +56,9 @@ rules:
   - error
   - ignorePackages
   - js: always  # better detection if we're doing es2020
-    jsx: never
-    ts: ignorePackages
-    tsx: never
+    jsx: always
+    ts: always
+    tsx: always
   import/named:  # disabled in typescript
   - off
   import/no-absolute-path:  # disabled in es2020
