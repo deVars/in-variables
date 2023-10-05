@@ -8,6 +8,7 @@ mkdir ./dist
 
 ln -s "${PWD}/index.html" ./dist/index.html
 ln -s "${PWD}/index.css" ./dist/index.css
+ln -s "${PWD}/friconix.min.css" ./dist/friconix.min.css
 ln -s "${PWD}/favicon.ico" ./dist/favicon.ico
 ln -s "${PWD}/3p" ./dist/3p
 ln -s "${PWD}/assets" ./dist/assets

@@ -21,7 +21,7 @@ function view({
                 { href: 'mailto:ross.is.hire.able036@passinbox.com' },
                 [
                   m('i.fi-xnlxxm-close-envelope.typo-s-h1.dsp-flex', [
-                    m(getIcon(), { iconName: 'close-envelope', optionsMask: 'xnlxxm' }),
+                    m(getIcon(), { iconName: 'close-envelope-solid', optionsMask: 'xnsxxm' }),
                   ]),
                 ]),
             ]),
