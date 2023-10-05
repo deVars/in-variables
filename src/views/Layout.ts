@@ -39,9 +39,9 @@ function view({
           )),
       ]),
     ]),
-    m('.content', [
+    m('.content.box-w-1.box-t-s-s.box-c-100', [
       m('.wid-max.mgn-cntr', [
-        m('section.pad-t-0-25.box-w-1.box-t-s-s.box-c-100', children),
+        m('section.pad-t-0-25', children),
       ]),
     ]),
   ]);
