@@ -1,0 +1,94 @@
+- title: 'Latent Diffusion Explorations'
+  sub: Works that explore latent diffusion models, possible generative ai limitations, and the stable diffusion app itself.
+  link: ''
+  imagePath: 'latent-diff.png'
+  features:
+    - python
+    - diffusion models
+    - generative ai
+    - masking
+  description:
+    - Machine learning models are cool.  I wanted to explore how the diffusion ones work and, hopefully in the process, learn some quirks while satisfying some creative moments.
+- title: 'Main-thread Offloading: Virtualizers'
+  sub: 'Project is currently being explored.  How to take advantage of recent WebAPI observers for list and table virtualization.'
+  link: ''
+  imagePath: 'unknown.png'
+  features:
+    - javascript
+    - web api
+    - dom
+    - virtual nodes
+    - shadow dom
+    - tbd
+  description:
+    - Offloading event handlers sounds fun to explore.
+    - Passive listeners + observers can provide a boost to website responsiveness.
+    - Project is currently in the exploration phase.
+- title: 'HAR tree view'
+  sub: A tool to look into what a website loads and how it performs while loading all its resources.
+  link: 'https://github.com/deVars/har-tree-viewer'
+  imagePath: 'har-tree.png'
+  features:
+    - http archive
+    - mimetype
+    - d3.js
+    - analytics tool
+  description:
+    - I needed a tool like this "for science".  For me, I wanted the sites I frequent the most to load "the bare minimum" so they are lean and responsive.
+    - But there's a more general approach to why need the tooling as well.
+    - With online privacy being the common and recurring topic in today's world, I thought it would be fair if we, as web users/ netizens, can at least know what we are downloading.
+    - This tool let's users easily see which packages/ scripts sound or look suspicious by looking at what each can load to the browser.
+- title: 'IL patcher'
+  sub: 'A patch tool to help make patches and patch-lists for the intermediate language'
+  link: 'https://github.com/deVars/ilpython'
+  imagePath: 'python.png'
+  features:
+    - python
+    - intermediate language
+    - arm
+    - thumb
+  description:
+    - Legacy versions of the unity engine makes use of pre-compiled bytecode named "intermediate language".  This tool/ helper uses python to organize and help with patch writing.
+    - Python tuples, list splitting and numerical base conversions are leveraged to help generate architecture-dependent "branch" and "link" codes this tool provides.
+- title: 'Hosts List'
+  sub: 'Small server setup that pulls hosts from known lists, sorts, merges and adds a custom list of your own'
+  link: 'https://github.com/deVars/hosts'
+  imagePath: 'hosts.png'
+  features:
+  - nodejs
+  - string parsing
+  - hosts
+  - resolver
+  description:
+  - This project came up when I was exploring pihole capabilities.  Pihole needs a list to determine when it can resolve to localhost and I figured "why not serve the same resolver list as a different, more universal format?"
+  - Since my minibox died during the pandemic and I haven't recovered it from the hardware costs, this project has been shelved.
+- title: 'Node-based PS4 RPC'
+  sub: 'An alternative way to communicate with your PS4 via RPC served in NodeJS'
+  link: 'https://github.com/deVars/ps4-node-rpc'
+  imagePath: 'nodejs.png'
+  features:
+  - nodejs
+  - rpc
+  - inter-device communications
+  - bigint
+  - 64-bit access
+  description:
+  - This RPC server lets you send payloads/ datagrams to your PS4 as an alternate form of communications (as compared to UI and API).
+  - The idea of implementing a node server comes from the limitless potential that could be unlocked the more datagram patterns are explored combined with the familiarity of NodeJS.
+  - "At that time, one of the bridges to cross was how Node(V8-V10) can support 64-bit mapping and addressing due to its native 32-bit integer range.  Solutions that were explored during that time are: integer splitting (high- and low- order); and/ or using a module that talks to OpenSSL's library to provide this functionality.  Current Node versions already supports this functionality."
+  - A point of consideration is how to cross the gap of converting lower-level payloads to easily executable "command-groups".
+  - This particular server is aimed to take advantage of Node's asynchronous nature to queue RPC pokes and simulate a data "freeze".
+- title: 'Tree maker'
+  sub: 'How to visualize data when the children looks like itself'
+  link: 'https://github.com/deVars/treemaker-3'
+  imagePath: 'tree-maker.png'
+  features:
+  - typescript
+  - webpack
+  - mithril
+  - polythene
+  description:
+  - Tries to visualize a finite, nesting and repeating [on itself] data structure.
+  - The idea comes from the beach paradox, mandelbrot patterns and data fractals.
+  - At that time, I was thinking my data nodes can have patch info the same as how the leaves could.  "So why not hit two birds with one stone figuring out what happens if I do both?" — the idea naturally came after.
+  - This project uses early typescript, angularjs, and webpack; but then got replaced with mithril, msx, and polythene on the iterations.

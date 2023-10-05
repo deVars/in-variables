@@ -12,6 +12,8 @@ import type { JourneyEntry } from './models/Journey.js';
 import { getInitialJourneyEntries, tbdEntry, tbdJourneyId } from './models/Journey.js';
 import getAttributionView from './views/Attribution.js';
 import getJourneyEntryView, { type JourneyDetailView } from './views/JourneyEntry.js';
+import getProjectsView from './views/Projects.js';
+import { getInitialProjectEntries, type ProjectEntry } from './models/Project.js';
 
 declare global {
   interface Window {
@@ -30,10 +32,12 @@ getRoute().then((route) => {
   const journeyView = getJourneyView();
   const attributionView = getAttributionView();
   const journeyEntryView = getJourneyEntryView();
+  const projectView = getProjectsView();
   const skills = getStrictAttributeModel<SkillEntry[]>([]);
   const root = getAttributeModel<HierarchyNode<SkillEntry>>(null);
   const journeyEntries = getStrictAttributeModel<JourneyEntry[]>([]);
   const journeyEntry = getAttributeModel<JourneyEntry>(null);
+  const projects = getStrictAttributeModel<ProjectEntry[]>([]);
 
   // TODO:  what happens if we do a direct m(getAboutView()) inside the route tree
   m.route.prefix = '#';
@@ -56,9 +60,11 @@ getRoute().then((route) => {
       })),
     },
     [route.project.path]: {
-      render: () => m(layout, { route }, m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0', {}, [
-        m('.sur-bg-2.pad-1-0', 'This section is a work in progress'),
-      ])),
+      render: () => m(layout, { route }, m(projectView, {
+        projects,
+        oninit: projectDetailViewOnInit,
+        onclick: projectDetailViewNavigate,
+      })),
     },
     [route.attribution.path]: {
       render: () => m(layout, { route }, m(attributionView)),
@@ -120,5 +126,16 @@ getRoute().then((route) => {
     /** this fn assumes the user visited the journey list already */
     const { path } = route.workDetail;
     return m.route.set(path, { id });
+  }
+
+  async function projectDetailViewOnInit() {
+    projects.set([]);
+    return projects.set(await getInitialProjectEntries());
+  }
+
+  function projectDetailViewNavigate(id: number) {
+    /** this fn assumes the user visited the project list already */
+    console.log('project click id', id);
+    // return m.route.set(path, { id });
   }
 });

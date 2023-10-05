@@ -16,7 +16,7 @@ function view() {
   return m('.pad-t-4-0.pad-l-2-0.pad-r-2-0.pad-b-3-0.box-sur-1.typo-s-h1',
     aboutLabels.map(
       ({ label, isItalic }, index) => ([
-        m('img.scl-suprt-img.about-img', {
+        m('img.scl-suprt-img.obj-fit-c.about-img', {
           src: `${assetsRoot}/about-${index}.png`,
           loading: 'lazy',
         }),
@@ -25,7 +25,7 @@ function view() {
     )
       .flat()
       .concat([
-        m('img.scl-suprt-img.about-img', {
+        m('img.scl-suprt-img.obj-fit-c.about-img', {
           src: '../../assets/images/about-4.png',
           loading: 'lazy',
         }),
