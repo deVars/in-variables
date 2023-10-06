@@ -12,7 +12,7 @@ import { initialEntry } from './models/Journey.js';
 import getAttributionView from './views/Attribution.js';
 import getJourneyEntryView from './views/JourneyEntry.js';
 import getProjectsView from './views/Projects.js';
-import { type ProjectEntry } from './models/Project.js';
+import { initialProjectEntry, type ProjectEntry } from './models/Project.js';
 import { getProjectView } from './views/Project.js';
 
 declare global {
@@ -49,7 +49,7 @@ getRoute().then((route) => {
   const projectView = getProjectView({
     homePath,
     listPath: route.project.path,
-    project: getAttributeModel<ProjectEntry>(null),
+    project: getStrictAttributeModel<ProjectEntry>(initialProjectEntry),
   });
 
   m.route.prefix = '#';
