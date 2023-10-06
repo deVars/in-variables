@@ -15,7 +15,16 @@ export async function getInitialProjectEntries(): Promise<ProjectEntry[]> {
   return getYaml(projectsPath);
 }
 
-export const defaultProjectEntry: ProjectEntry = {
+export const notFoundProjectEntry: ProjectEntry = {
+  title: '',
+  sub: '',
+  link: '',
+  imagePath: '',
+  features: [],
+  description: [],
+};
+
+export const initialProjectEntry: ProjectEntry = {
   title: '',
   sub: '',
   link: '',
@@ -26,5 +35,5 @@ export const defaultProjectEntry: ProjectEntry = {
 
 export async function getProjectEntry(maybeIndex: string): Promise<ProjectEntry> {
   const index = Number(maybeIndex);
-  return getYamlListItem(index, projectsPath, defaultProjectEntry);
+  return getYamlListItem(index, projectsPath, notFoundProjectEntry);
 }
