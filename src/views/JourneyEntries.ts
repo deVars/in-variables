@@ -4,6 +4,7 @@ import type { StrictAttributeModel } from '../models/AttributeModel.js';
 import { getInitialJourneyEntries, tbdJourneyId } from '../models/Journey.js';
 import getIcon from './FriconixIcon.js';
 import type { IdHandler, WithOnClick } from './helpers/ComponentHandler.js';
+import Loading from './Loading.js';
 
 export interface JourneyView {
   entries: StrictAttributeModel<JourneyEntry[]>;
@@ -22,7 +23,7 @@ export default function getJourneyView({
 
   function view({ attrs: { onclick } }: m.Vnode<WithOnClick>) {
     if (entries.value.length === 0) {
-      return m('.loading');
+      return m(Loading());
     }
 
     const mappedEntries = entries.value.map(toVnode(onclick));

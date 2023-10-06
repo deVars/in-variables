@@ -1,3 +1,4 @@
+import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import { getYaml, getYamlListItem } from './helpers/YamlLoader.js';
 
 const journeyEntriesPath = './static/journey-entries.yaml';
@@ -55,7 +56,9 @@ export async function getInitialJourneyEntries(): Promise<JourneyEntry[]> {
 export async function getJourneyEntry(maybeId: string): Promise<JourneyEntry> {
   const id = Number(maybeId);
   if (id === tbdJourneyId) {
-    return tbdEntry;
+    const promise = Promise.resolve(tbdEntry);
+    promise.then(() => m.redraw());
+    return promise;
   }
   return getYamlListItem(id, journeyEntriesPath, notFoundEntry);
 }

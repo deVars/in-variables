@@ -2,6 +2,7 @@ import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import { getInitialProjectEntries, type ProjectEntry } from '../models/Project.js';
 import { type StrictAttributeModel } from '../models/AttributeModel.js';
 import type { WithOnClick } from './helpers/ComponentHandler';
+import Loading from './Loading.js';
 
 export interface ProjectsView {
   projects: StrictAttributeModel<ProjectEntry[]>;
@@ -21,7 +22,7 @@ export default function getProjectsView({
   function view({ attrs: { onclick } }: m.Vnode<WithOnClick>) {
     const projects = projectsModel.value;
     if (projects.length === 0) {
-      return m('.loading');
+      return m(Loading());
     }
 
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0', projects.map(({

@@ -6,6 +6,7 @@ import { getProjectEntry, initialProjectEntry, notFoundProjectEntry } from '../m
 import getNotFound from './NotFound.js';
 import getIcon from './FriconixIcon.js';
 import type { WithId } from '../models/helpers/WithId';
+import Loading from './Loading.js';
 
 export interface ProjectView extends WithHomePath {
   listPath: string;
@@ -25,7 +26,7 @@ export function getProjectView({
 
   function view() {
     if (project.value === initialProjectEntry) {
-      return m('.loading');
+      return m(Loading());
     }
 
     if (project.value === notFoundProjectEntry) {

@@ -2,9 +2,10 @@ import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import type { JourneyEntry } from '../models/Journey.js';
 import type { StrictAttributeModel } from '../models/AttributeModel.js';
 import getNotFound, { type WithHomePath } from './NotFound.js';
-import { getJourneyEntry, notFoundEntry, tbdEntry } from '../models/Journey.js';
+import { getJourneyEntry, initialEntry, notFoundEntry, tbdEntry } from '../models/Journey.js';
 import getIcon from './FriconixIcon.js';
 import type { WithId } from '../models/helpers/WithId.js';
+import Loading from './Loading.js';
 
 export interface JourneyDetailView extends WithHomePath {
   listPath: string;
@@ -17,10 +18,15 @@ export default function getJourneyEntryView({
   return () => ({ oninit, view });
 
   async function oninit({ attrs: { id } }: m.Vnode<WithId>) {
+    entry.set(initialEntry);
     return entry.set(await getJourneyEntry(id));
   }
 
   function view() {
+    if (entry.value === initialEntry) {
+      return m(Loading());
+    }
+
     if (entry.value === notFoundEntry) {
       return m(getNotFound(), { homePath });
     }
