@@ -28,7 +28,7 @@ declare global {
 m.render(document.body, m('.sur-bg-1.sur-fg-1.typo-std', 'loading'));
 
 getRoute().then((route) => {
-  const layout = getLayout();
+  const layout = getLayout(route);
   const skillView = getSkillView();
   const aboutView = getAboutView();
   const journeyView = getJourneyView();
@@ -47,35 +47,35 @@ getRoute().then((route) => {
   m.route.prefix = '#';
   m.route(document.body, route.about.path, {
     [route.about.path]: {
-      render: () => m(layout, { route }, m(aboutView)),
+      render: () => m(layout, m(aboutView)),
     },
     [route.skill.path]: {
-      render: () => m(layout, { route }, m(skillView, {
+      render: () => m(layout, m(skillView, {
         skills, root,
         oninit: skillViewOnInit,
         onupdate: appendSkillTree,
       })),
     },
     [route.work.path]: {
-      render: () => m(layout, { route }, m(journeyView, {
+      render: () => m(layout, m(journeyView, {
         journeyEntries,
         oninit: journeyViewOnInit,
         onclick: journeyDetailViewNavigate,
       })),
     },
     [route.project.path]: {
-      render: () => m(layout, { route }, m(projectsView, {
+      render: () => m(layout, m(projectsView, {
         projects,
         oninit: projectListViewOnInit,
         onclick: projectDetailViewNavigate,
       })),
     },
     [route.attribution.path]: {
-      render: () => m(layout, { route }, m(attributionView)),
+      render: () => m(layout, m(attributionView)),
     },
     /** unlisted paths start here */
     [route.workDetail.path]: {
-      render: ({ attrs: { id } }: m.Vnode<WithId>) => m(layout, { route }, m(
+      render: ({ attrs: { id } }: m.Vnode<WithId>) => m(layout, m(
         journeyEntryView, {
           id,
           journeyEntry,
@@ -86,7 +86,7 @@ getRoute().then((route) => {
       )),
     },
     [route.projectDetail.path]: {
-      render: ({ attrs }: m.Vnode<WithId>) => m(layout, { route }, m(
+      render: ({ attrs }: m.Vnode<WithId>) => m(layout, m(
         projectView, {
           id: attrs.id,
           project,

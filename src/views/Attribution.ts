@@ -1,8 +1,8 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import getIcon from './FriconixIcon.js';
 
-export default function getAttributionView(): m.Component {
-  return { view };
+export default function getAttributionView(): m.ClosureComponent {
+  return () => ({ view });
 }
 
 function view() {
