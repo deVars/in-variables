@@ -52,6 +52,10 @@ export async function getInitialJourneyEntries(): Promise<JourneyEntry[]> {
   return getYaml(journeyEntriesPath);
 }
 
-export async function getJourneyEntry(id: number): Promise<JourneyEntry> {
+export async function getJourneyEntry(maybeId: string): Promise<JourneyEntry> {
+  const id = Number(maybeId);
+  if (id === tbdJourneyId) {
+    return tbdEntry;
+  }
   return getYamlListItem(id, journeyEntriesPath, notFoundEntry);
 }

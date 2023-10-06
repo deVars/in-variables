@@ -2,7 +2,7 @@ import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import type { JourneyEntry } from '../models/Journey.js';
 import type { StrictAttributeModel } from '../models/AttributeModel.js';
 import getNotFound, { type WithHomePath } from './NotFound.js';
-import { getJourneyEntry, notFoundEntry, tbdEntry, tbdJourneyId } from '../models/Journey.js';
+import { getJourneyEntry, notFoundEntry, tbdEntry } from '../models/Journey.js';
 import getIcon from './FriconixIcon.js';
 import type { WithId } from '../models/helpers/WithId.js';
 
@@ -16,11 +16,7 @@ export default function getJourneyEntryView({
 }: JourneyDetailView): m.ClosureComponent<WithId> {
   return () => ({ oninit, view });
 
-  async function oninit({ attrs: { id: idParam } }: m.Vnode<WithId>) {
-    const id = Number(idParam);
-    if (id === tbdJourneyId) {
-      return entry.set(tbdEntry);
-    }
+  async function oninit({ attrs: { id } }: m.Vnode<WithId>) {
     return entry.set(await getJourneyEntry(id));
   }
 
@@ -52,7 +48,7 @@ export default function getJourneyEntryView({
             ]),
             m('.mgn-l-0-5', location),
           ]),
-          m('.employ-dates.typo-s-h4.typo-sub.dsp-flex', [
+          m('.employ-dates.typo-s-h4.typo-sub.dsp-flex.mgn-b-0-5', [
             m('i.fi-xnlxxm-calendar.dsp-flex', [
               m(getIcon(), { iconName: 'calendar', optionsMask: 'xnlxxm' }),
             ]),
