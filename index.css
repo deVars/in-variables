@@ -57,6 +57,10 @@ body {
   max-width: 1024px;
 }
 
+.wid-max-12-0 {
+  max-width: 12rem;
+}
+
 .wid-4-0 {
   width: 4rem;
 }

@@ -13,7 +13,9 @@ import { getInitialJourneyEntries, tbdEntry, tbdJourneyId } from './models/Journ
 import getAttributionView from './views/Attribution.js';
 import getJourneyEntryView, { type JourneyDetailView } from './views/JourneyEntry.js';
 import getProjectsView from './views/Projects.js';
-import { getInitialProjectEntries, type ProjectEntry } from './models/Project.js';
+import { getInitialProjectEntries, getProjectEntry, type ProjectEntry } from './models/Project.js';
+import type { WithId } from './models/helpers/WithId';
+import { getProjectView, type ProjectView } from './views/Project.js';
 
 declare global {
   interface Window {
@@ -32,12 +34,14 @@ getRoute().then((route) => {
   const journeyView = getJourneyView();
   const attributionView = getAttributionView();
   const journeyEntryView = getJourneyEntryView();
-  const projectView = getProjectsView();
+  const projectsView = getProjectsView();
+  const projectView = getProjectView();
   const skills = getStrictAttributeModel<SkillEntry[]>([]);
   const root = getAttributeModel<HierarchyNode<SkillEntry>>(null);
   const journeyEntries = getStrictAttributeModel<JourneyEntry[]>([]);
   const journeyEntry = getAttributeModel<JourneyEntry>(null);
   const projects = getStrictAttributeModel<ProjectEntry[]>([]);
+  const project = getAttributeModel<ProjectEntry>(null);
 
   // TODO:  what happens if we do a direct m(getAboutView()) inside the route tree
   m.route.prefix = '#';
@@ -60,9 +64,9 @@ getRoute().then((route) => {
       })),
     },
     [route.project.path]: {
-      render: () => m(layout, { route }, m(projectView, {
+      render: () => m(layout, { route }, m(projectsView, {
         projects,
-        oninit: projectDetailViewOnInit,
+        oninit: projectListViewOnInit,
         onclick: projectDetailViewNavigate,
       })),
     },
@@ -71,13 +75,24 @@ getRoute().then((route) => {
     },
     /** unlisted paths start here */
     [route.workDetail.path]: {
-      render: ({ attrs: { id } }: m.Vnode<{id: string}>) => m(layout, { route }, m(
+      render: ({ attrs: { id } }: m.Vnode<WithId>) => m(layout, { route }, m(
         journeyEntryView, {
           id,
           journeyEntry,
           homePath: route.about.path,
           listPath: route.work.path,
           oninit: journeyEntryViewOnInit,
+        },
+      )),
+    },
+    [route.projectDetail.path]: {
+      render: ({ attrs }: m.Vnode<WithId>) => m(layout, { route }, m(
+        projectView, {
+          id: attrs.id,
+          project,
+          homePath: route.about.path,
+          listPath: route.project.path,
+          oninit: projectDetailViewOnInit,
         },
       )),
     },
@@ -128,14 +143,19 @@ getRoute().then((route) => {
     return m.route.set(path, { id });
   }
 
-  async function projectDetailViewOnInit() {
+  async function projectDetailViewOnInit(vnode: m.Vnode<ProjectView>) {
+    project.set(null);
+    project.set(await getProjectEntry(vnode.attrs.id));
+  }
+
+  async function projectListViewOnInit() {
     projects.set([]);
     return projects.set(await getInitialProjectEntries());
   }
 
   function projectDetailViewNavigate(id: number) {
     /** this fn assumes the user visited the project list already */
-    console.log('project click id', id);
-    // return m.route.set(path, { id });
+    const { path } = route.projectDetail;
+    return m.route.set(path, { id });
   }
 });

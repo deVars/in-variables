@@ -4,9 +4,10 @@ import type { AttributeModel } from '../models/AttributeModel.js';
 import getNotFound, { type WithHomePath } from './NotFound.js';
 import { tbdEntry } from '../models/Journey.js';
 import getIcon from './FriconixIcon.js';
+import type { WithId } from '../models/helpers/WithId.js';
 
-export interface JourneyDetailView extends WithHomePath {
-  id: string;
+export interface JourneyDetailView extends WithHomePath, WithId {
+  // id: string;
   listPath: string;
   journeyEntry: AttributeModel<JourneyEntry>;
 }
