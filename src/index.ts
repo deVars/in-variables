@@ -8,9 +8,9 @@ import { getAttributeModel, getStrictAttributeModel } from './models/AttributeMo
 import getAboutView from './views/About.js';
 import getJourneyView from './views/JourneyEntries.js';
 import type { JourneyEntry } from './models/Journey.js';
-import { getInitialJourneyEntries, initialEntry, tbdEntry, tbdJourneyId } from './models/Journey.js';
+import { initialEntry } from './models/Journey.js';
 import getAttributionView from './views/Attribution.js';
-import getJourneyEntryView, { type JourneyDetailView } from './views/JourneyEntry.js';
+import getJourneyEntryView from './views/JourneyEntry.js';
 import getProjectsView from './views/Projects.js';
 import { getInitialProjectEntries, getProjectEntry, type ProjectEntry } from './models/Project.js';
 import type { WithId } from './models/helpers/WithId';

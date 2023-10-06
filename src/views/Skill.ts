@@ -35,8 +35,3 @@ export default function getSkillView({
     return m(selector);
   }
 }
-
-/** Tried converting this to a closure component
- *  The problem was that the append D3 portion isn't meant to be part of
- *  the mithril component lifecycle and will freeze the render
- *  if put in this scope */

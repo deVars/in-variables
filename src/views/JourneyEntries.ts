@@ -3,22 +3,15 @@ import type { JourneyEntry } from '../models/Journey.js';
 import type { StrictAttributeModel } from '../models/AttributeModel.js';
 import { getInitialJourneyEntries, tbdJourneyId } from '../models/Journey.js';
 import getIcon from './FriconixIcon.js';
+import type { IdHandler, WithOnClick } from './helpers/ComponentHandler.js';
 
 export interface JourneyView {
   entries: StrictAttributeModel<JourneyEntry[]>;
 }
 
-interface JourneyViewHandler {
-  onclick: IdHandler;
-}
-
-interface IdHandler {
-  (id: number): void | Promise<void>;
-}
-
 export default function getJourneyView({
   entries,
-}: JourneyView): m.ClosureComponent<JourneyViewHandler> {
+}: JourneyView): m.ClosureComponent<WithOnClick> {
   return () => ({ oninit, view });
 
   function oninit() {
@@ -27,7 +20,7 @@ export default function getJourneyView({
     });
   }
 
-  function view({ attrs: { onclick } }: m.Vnode<JourneyViewHandler>) {
+  function view({ attrs: { onclick } }: m.Vnode<WithOnClick>) {
     if (entries.value.length === 0) {
       return m('.loading');
     }
