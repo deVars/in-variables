@@ -29,15 +29,17 @@ m.render(document.body, m('.sur-bg-1.sur-fg-1.typo-std', 'loading'));
 
 getRoute().then((route) => {
   const layout = getLayout(route);
-  const skillView = getSkillView();
+  const skillView = getSkillView({
+    root: getAttributeModel<HierarchyNode<SkillEntry>>(null),
+    selector: '.skill-root',
+    skills: getStrictAttributeModel<SkillEntry[]>([]),
+  });
   const aboutView = getAboutView();
   const journeyView = getJourneyView();
   const attributionView = getAttributionView();
   const journeyEntryView = getJourneyEntryView();
   const projectsView = getProjectsView();
   const projectView = getProjectView();
-  const skills = getStrictAttributeModel<SkillEntry[]>([]);
-  const root = getAttributeModel<HierarchyNode<SkillEntry>>(null);
   const journeyEntries = getStrictAttributeModel<JourneyEntry[]>([]);
   const journeyEntry = getAttributeModel<JourneyEntry>(null);
   const projects = getStrictAttributeModel<ProjectEntry[]>([]);
@@ -50,12 +52,7 @@ getRoute().then((route) => {
       render: () => m(layout, m(aboutView)),
     },
     [route.skill.path]: {
-      render: () => m(layout, m(skillView, {
-        skills, root,
-        selector: '.skill-root',
-        oninit: skillViewOnInit,
-        onupdate: appendSkillTree,
-      })),
+      render: () => m(layout, m(skillView)),
     },
     [route.work.path]: {
       render: () => m(layout, m(journeyView, {
@@ -98,14 +95,6 @@ getRoute().then((route) => {
       )),
     },
   });
-
-  function skillViewOnInit({ attrs: { skills: skillList, root: rootNode } }: m.Vnode<SkillView>) {
-    getInitialSkillList().then((newSkillList) => {
-      skillList.set(newSkillList);
-      const data: SkillEntry = { text: 'skills', sub: newSkillList };
-      rootNode.set(hierarchy(data, (d: SkillEntry) => d.sub));
-    });
-  }
 
   function journeyViewOnInit({ attrs: { journeyEntries: entries } }: m.Vnode<JourneyView>) {
     getInitialJourneyEntries().then((newEntries) => {
