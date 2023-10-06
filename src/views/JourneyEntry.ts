@@ -36,7 +36,10 @@ export default function getJourneyEntryView({
     }
 
     const { role, employer, location,
-      empStartMonth, empStartYear, empEndMonth, empEndYear } = entry.value;
+      empStartMonth, empStartYear, empEndMonth, empEndYear,
+      features, description } = entry.value;
+
+    const empRange = `${empStartYear}/ ${empStartMonth} – ${empEndYear}/ ${empEndMonth}`;
 
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0',
       [
@@ -58,7 +61,7 @@ export default function getJourneyEntryView({
             m('i.fi-xnlxxm-calendar.dsp-flex', [
               m(getIcon(), { iconName: 'calendar', optionsMask: 'xnlxxm' }),
             ]),
-            m('.mgn-l-0-5', `${empStartYear}/ ${empStartMonth} – ${empEndYear}/ ${empEndMonth}`),
+            m('.mgn-l-0-5', empRange),
           ]),
           m(m.route.Link, {
             href: listPath,
@@ -70,9 +73,12 @@ export default function getJourneyEntryView({
             m('.typo-s-h5', 'back to list'),
           ]),
         ]),
-        m('.sur-bg-2.pad-1-0.typo-mono.typo-s-h6', [
-          m('.dsp-flex.flx-rap', entry.value.features.map(
+        m('.sur-bg-2.pad-1-0.pad-b-2-0', [
+          m('.dsp-flex.flx-rap.typo-s-h6.typo-mono', features.map(
             (feature) => m('.box-c-100.box-rad-0-5.box-w-1.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
+          )),
+          m('ul.sur-bg-2.pad-1-0', description.map(
+            (descriptionLine) => m('li.mgn-b-0-5', descriptionLine),
           )),
         ]),
       ]);
@@ -96,7 +102,7 @@ function getTBDView(listPath: string) {
           ]),
           m('.mgn-l-0-5', 'Earth, but might be space'),
         ]),
-        m('.employ-dates.typo-s-h4.typo-sub.dsp-flex', [
+        m('.employ-dates.mgn-b-0-5.typo-s-h4.typo-sub.dsp-flex', [
           m('i.fi-xnlxxm-calendar.dsp-flex', [
             m(getIcon(), { iconName: 'calendar', optionsMask: 'xnlxxm' }),
           ]),

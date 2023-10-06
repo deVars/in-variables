@@ -12,6 +12,7 @@ export interface JourneyEntry {
   empStartMonth: number;
   empEndMonth: number;
   features: string[];
+  description: string[];
 }
 
 export const tbdJourneyId = 1000;
@@ -25,6 +26,7 @@ export const tbdEntry: JourneyEntry = {
   empStartMonth: 0,
   empEndMonth: 0,
   features: [],
+  description: [],
 };
 
 export const notFoundEntry: JourneyEntry = {
@@ -36,6 +38,7 @@ export const notFoundEntry: JourneyEntry = {
   empStartMonth: 0,
   empEndMonth: 0,
   features: [],
+  description: [],
 };
 
 export const initialEntry: JourneyEntry = {
@@ -47,6 +50,7 @@ export const initialEntry: JourneyEntry = {
   empStartMonth: 0,
   empEndMonth: 0,
   features: [],
+  description: [],
 };
 
 export async function getInitialJourneyEntries(): Promise<JourneyEntry[]> {
