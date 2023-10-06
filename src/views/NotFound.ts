@@ -15,10 +15,10 @@ function view({ attrs: { homePath } }: m.Vnode<WithHomePath>) {
       m('i.fi-tnlxxl-warning-solid.dsp-flex', [
         m(getIcon(), { iconName: 'warning-solid', optionsMask: 'tnlxxl' }),
       ]),
-      m('.box-ctrl', '404: Page Not Found'),
+      m('.box-ctrl.mgn-l-1-0', '404: Page Not Found'),
     ]),
     m('hr.sur-fg-100'),
-    m('.typo-sub', [
+    m('.typo-sub.mgn-b-2-0.pad-t-0-5', [
       m('span', 'The page requested cannot be found.  Double check if there is a typo or you can '),
       m(m.route.Link, {
         href: homePath,
