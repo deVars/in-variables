@@ -1,4 +1,4 @@
-import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
+import { getYaml } from './helpers/YamlLoader.js';
 
 const skillListPath = './static/skills.yaml';
 
@@ -8,12 +8,5 @@ export interface SkillEntry {
 }
 
 export async function getInitialSkillList(): Promise<SkillEntry[]> {
-  const [ { parse }, skillYamlBlob ] = await Promise.all([
-    import('https://cdn.jsdelivr.net/npm/yaml@2/+esm'),
-    m.request<string>(skillListPath, {
-      responseType: 'text',
-    }),
-  ]);
-  const { skills } = parse(skillYamlBlob);
-  return skills;
+  return getYaml(skillListPath);
 }
