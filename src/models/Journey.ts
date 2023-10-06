@@ -1,4 +1,4 @@
-import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
+import { getYaml, getYamlListItem } from './helpers/YamlLoader.js';
 
 const journeyEntriesPath = './static/journey-entries.yaml';
 
@@ -26,12 +26,32 @@ export const tbdEntry: JourneyEntry = {
   features: [],
 };
 
+export const notFoundEntry: JourneyEntry = {
+  role: '',
+  employer: 'N/A',
+  location: 'N/A',
+  empStartYear: 0,
+  empEndYear: 0,
+  empStartMonth: 0,
+  empEndMonth: 0,
+  features: [],
+};
+
+export const initialEntry: JourneyEntry = {
+  role: '',
+  employer: 'N/A',
+  location: 'N/A',
+  empStartYear: 0,
+  empEndYear: 0,
+  empStartMonth: 0,
+  empEndMonth: 0,
+  features: [],
+};
+
 export async function getInitialJourneyEntries(): Promise<JourneyEntry[]> {
-  const [ { parse }, journeyYamlBlob ] = await Promise.all([
-    import('https://cdn.jsdelivr.net/npm/yaml@2/+esm'),
-    m.request<string>(journeyEntriesPath, {
-      responseType: 'text',
-    }),
-  ]);
-  return parse(journeyYamlBlob);
+  return getYaml(journeyEntriesPath);
+}
+
+export async function getJourneyEntry(id: number): Promise<JourneyEntry> {
+  return getYamlListItem(id, journeyEntriesPath, notFoundEntry);
 }

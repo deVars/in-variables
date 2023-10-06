@@ -1,15 +1,14 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
-import { hierarchy, type HierarchyNode } from 'https://cdn.jsdelivr.net/npm/d3-hierarchy@3/+esm';
+import { type HierarchyNode } from 'https://cdn.jsdelivr.net/npm/d3-hierarchy@3/+esm';
 import getRoute from './route.js';
-import { getInitialSkillList, type SkillEntry } from './models/Skill.js';
-import getSkillView, { type SkillView } from './views/Skill.js';
+import { type SkillEntry } from './models/Skill.js';
+import getSkillView from './views/Skill.js';
 import getLayout from './views/Layout.js';
 import { getAttributeModel, getStrictAttributeModel } from './models/AttributeModel.js';
-import { appendSkillTree } from './views/SkillForceTree.helper.js';
 import getAboutView from './views/About.js';
-import getJourneyView, { type JourneyView } from './views/JourneyEntries.js';
+import getJourneyView from './views/JourneyEntries.js';
 import type { JourneyEntry } from './models/Journey.js';
-import { getInitialJourneyEntries, tbdEntry, tbdJourneyId } from './models/Journey.js';
+import { getInitialJourneyEntries, initialEntry, tbdEntry, tbdJourneyId } from './models/Journey.js';
 import getAttributionView from './views/Attribution.js';
 import getJourneyEntryView, { type JourneyDetailView } from './views/JourneyEntry.js';
 import getProjectsView from './views/Projects.js';
@@ -28,6 +27,7 @@ declare global {
 m.render(document.body, m('.sur-bg-1.sur-fg-1.typo-std', 'loading'));
 
 getRoute().then((route) => {
+  const homePath = route.about.path;
   const layout = getLayout(route);
   const skillView = getSkillView({
     root: getAttributeModel<HierarchyNode<SkillEntry>>(null),
@@ -35,13 +35,17 @@ getRoute().then((route) => {
     skills: getStrictAttributeModel<SkillEntry[]>([]),
   });
   const aboutView = getAboutView();
-  const journeyView = getJourneyView();
+  const journeyView = getJourneyView({
+    entries: getStrictAttributeModel<JourneyEntry[]>([]),
+  });
   const attributionView = getAttributionView();
-  const journeyEntryView = getJourneyEntryView();
+  const journeyEntryView = getJourneyEntryView({
+    entry: getStrictAttributeModel<JourneyEntry>(initialEntry),
+    homePath,
+    listPath: route.work.path,
+  });
   const projectsView = getProjectsView();
   const projectView = getProjectView();
-  const journeyEntries = getStrictAttributeModel<JourneyEntry[]>([]);
-  const journeyEntry = getAttributeModel<JourneyEntry>(null);
   const projects = getStrictAttributeModel<ProjectEntry[]>([]);
   const project = getAttributeModel<ProjectEntry>(null);
 
@@ -56,8 +60,6 @@ getRoute().then((route) => {
     },
     [route.work.path]: {
       render: () => m(layout, m(journeyView, {
-        journeyEntries,
-        oninit: journeyViewOnInit,
         onclick: journeyDetailViewNavigate,
       })),
     },
@@ -73,15 +75,7 @@ getRoute().then((route) => {
     },
     /** unlisted paths start here */
     [route.workDetail.path]: {
-      render: ({ attrs: { id } }: m.Vnode<WithId>) => m(layout, m(
-        journeyEntryView, {
-          id,
-          journeyEntry,
-          homePath: route.about.path,
-          listPath: route.work.path,
-          oninit: journeyEntryViewOnInit,
-        },
-      )),
+      render: (vnode) => m(layout, m(journeyEntryView, vnode.attrs)),
     },
     [route.projectDetail.path]: {
       render: ({ attrs }: m.Vnode<WithId>) => m(layout, m(
@@ -95,37 +89,6 @@ getRoute().then((route) => {
       )),
     },
   });
-
-  function journeyViewOnInit({ attrs: { journeyEntries: entries } }: m.Vnode<JourneyView>) {
-    getInitialJourneyEntries().then((newEntries) => {
-      entries.set(newEntries);
-    });
-  }
-
-  async function journeyEntryViewOnInit({
-    attrs: { id: idParam, journeyEntry: entry },
-  }: m.Vnode<JourneyDetailView>) {
-    const id = Number(idParam);
-    let isInitialEntriesEmpty = false;
-
-    if (journeyEntries.value.length === 0) {
-      isInitialEntriesEmpty = true;
-      const entries = await getInitialJourneyEntries();
-      journeyEntries.set(entries);
-    }
-
-    entry.set(getJourneyEntry(id));
-    return !isInitialEntriesEmpty ? m.redraw() : null;
-
-    function getJourneyEntry(someId: number) {
-      if (someId === tbdJourneyId) {
-        return tbdEntry;
-      }
-
-      const maybeJourneyEntry = journeyEntries.value[id];
-      return !maybeJourneyEntry ? null : maybeJourneyEntry;
-    }
-  }
 
   function journeyDetailViewNavigate(id: number) {
     /** this fn assumes the user visited the journey list already */
