@@ -6,16 +6,21 @@ import { type AttributeModel, type StrictAttributeModel } from '../models/Attrib
 export interface SkillView {
   skills: StrictAttributeModel<SkillEntry[]>;
   root: AttributeModel<HierarchyNode<SkillEntry>>;
+  selector: string;
 }
 
 export default function getSkillView(): m.Component<SkillView> {
   return { view };
 }
 
-function view({ attrs: { root } }: m.Vnode<SkillView>): m.Children {
+/** Tried converting this to a closure component
+ *  The problem was that the append D3 portion isn't meant to be part of
+ *  the mithril component lifecycle and will freeze the render
+ *  if put in this scope */
+function view({ attrs: { root, selector } }: m.Vnode<SkillView>): m.Children {
   if (!root.value) {
     // TODO: loading
     return m('.loading');
   }
-  return m('#skillContainer');
+  return m(selector);
 }

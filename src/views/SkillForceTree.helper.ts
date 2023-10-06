@@ -6,7 +6,7 @@ import { type HierarchyNode } from 'https://cdn.jsdelivr.net/npm/d3-hierarchy@3/
 import { type SkillView } from './Skill.js';
 import { type SkillEntry } from '../models/Skill.js';
 
-export function appendSkillTree({ attrs: { skills, root } }: m.VnodeDOM<SkillView>): void {
+export function appendSkillTree({ attrs: { skills, root, selector } }: m.VnodeDOM<SkillView>): void {
   if (!root.value) {
     console.warn('expected empty root', skills.value, root.value);
     return;
@@ -26,7 +26,7 @@ export function appendSkillTree({ attrs: { skills, root } }: m.VnodeDOM<SkillVie
   drawnNodes.call(drag(simulation));
   simulation.on('tick', ticked);
 
-  d3Select.select('#skillContainer').append(() => svg.node());
+  d3Select.select(selector).append(() => svg.node());
 
   function ticked() {
     drawnLinks.attr('x1', (d) => d.source.x ?? null)

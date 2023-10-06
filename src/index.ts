@@ -52,6 +52,7 @@ getRoute().then((route) => {
     [route.skill.path]: {
       render: () => m(layout, m(skillView, {
         skills, root,
+        selector: '.skill-root',
         oninit: skillViewOnInit,
         onupdate: appendSkillTree,
       })),
