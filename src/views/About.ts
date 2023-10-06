@@ -1,7 +1,7 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 
-export default function getAboutView(): m.Component {
-  return { view };
+export default function getAboutView(): m.ClosureComponent {
+  return () => ({ view });
 }
 
 const assetsRoot = '../../assets/images';
