@@ -2,8 +2,8 @@ import { drag as d3Drag } from 'https://cdn.jsdelivr.net/npm/d3-drag@3/+esm';
 import * as d3Force from 'https://cdn.jsdelivr.net/npm/d3-force@3/+esm';
 import * as d3Select from 'https://cdn.jsdelivr.net/npm/d3-selection@3/+esm';
 import { type HierarchyNode } from 'https://cdn.jsdelivr.net/npm/d3-hierarchy@3/+esm';
-import { type SkillView } from './Skill.js';
-import { type SkillEntry } from '../models/Skill.js';
+import { type SkillView } from '../Skill';
+import { type SkillEntry } from '../../models/Skill';
 
 export function appendSkillTree({ root, selector, skills }: SkillView): void {
   if (!root.value) {

@@ -2,7 +2,7 @@ import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import { hierarchy, type HierarchyNode } from 'https://cdn.jsdelivr.net/npm/d3-hierarchy@3/+esm';
 import { getInitialSkillList, type SkillEntry } from '../models/Skill.js';
 import { type AttributeModel, type StrictAttributeModel } from '../models/AttributeModel.js';
-import { appendSkillTree } from './SkillForceTree.helper.js';
+import { appendSkillTree } from './helpers/SkillForceTree.js';
 import Loading from './Loading.js';
 
 export interface SkillView {
