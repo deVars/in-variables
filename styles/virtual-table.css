@@ -9,3 +9,7 @@
 .oflo-hx-ay {
   overflow: hidden auto;
 }
+
+.pos-rel {
+  position: relative;
+}
