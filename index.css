@@ -1,6 +1,7 @@
 @import url('./styles/box.css');
 @import url('./styles/friconix-svg.css');
 @import url('./styles/pad.css');
+@import url('./styles/virtual-table.css');
 @import url('./styles/typo.css');
 
 :root {
@@ -167,6 +168,10 @@ body {
 
 .flx-rap {
   flex-wrap: wrap;
+}
+
+.flx-j-c {
+  justify-content: center;
 }
 
 .vert-aln-mid {

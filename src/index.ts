@@ -14,6 +14,7 @@ import getJourneyEntryView from './views/JourneyEntry.js';
 import getProjectsView from './views/Projects.js';
 import { initialProjectEntry, type ProjectEntry } from './models/Project.js';
 import { getProjectView } from './views/Project.js';
+import getTableVirtualizationDemo from './views/TableVirtualizationDemo.js';
 
 declare global {
   interface Window {
@@ -51,6 +52,7 @@ getRoute().then((route) => {
     listPath: route.project.path,
     project: getStrictAttributeModel<ProjectEntry>(initialProjectEntry),
   });
+  const tableVirtualizationDemoView = getTableVirtualizationDemo();
 
   m.route.prefix = '#';
   m.route(document.body, route.about.path, {
@@ -79,6 +81,9 @@ getRoute().then((route) => {
     },
     [route.projectDetail.path]: {
       render: (vnode) => m(layout, m(projectView, vnode.attrs)),
+    },
+    [route.tableVirtualization.path]: {
+      render: () => m(layout, m(tableVirtualizationDemoView, '')),
     },
   });
 
