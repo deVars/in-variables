@@ -65,7 +65,7 @@ export default function getJourneyEntryView({
           ]),
           m(m.route.Link, {
             href: listPath,
-            selector: '.dsp-flex.flx-a-c.link.sur-fg-3',
+            selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3',
           }, [
             m('i.fi-xnslxl-arrow-simple.dsp-flex', [
               m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
@@ -100,7 +100,7 @@ function getTBDView(listPath: string) {
           m('i.fi-xnlxxm-map-marker-solid.dsp-flex', [
             m(getIcon(), { iconName: 'map-marker-solid', optionsMask: 'xnlxxm' }),
           ]),
-          m('.mgn-l-0-5', 'Earth, but might be space'),
+          m('.mgn-l-0-5', 'Earth?'),
         ]),
         m('.employ-dates.mgn-b-0-5.typo-s-h4.typo-sub.dsp-flex', [
           m('i.fi-xnlxxm-calendar.dsp-flex', [
@@ -110,7 +110,7 @@ function getTBDView(listPath: string) {
         ]),
         m(m.route.Link, {
           href: listPath,
-          selector: '.dsp-flex.flx-a-c.link.sur-fg-3',
+          selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3',
         }, [
           m('i.fi-xnslxl-arrow-simple.dsp-flex', [
             m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
