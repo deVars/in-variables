@@ -7,15 +7,17 @@ import getNotFound from './NotFound.js';
 import getIcon from './FriconixIcon.js';
 import type { WithId } from '../models/helpers/WithId';
 import Loading from './Loading.js';
+import { type RouteEntry } from '../route.js';
 
 export interface ProjectView extends WithHomePath {
   listPath: string;
   project: StrictAttributeModel<ProjectEntry>;
+  routeMap: Record<string, RouteEntry>;
 }
 
 const assetsRoot = '../../assets/images';
 export function getProjectView({
-  homePath, listPath, project,
+  homePath, listPath, project, routeMap,
 }: ProjectView): m.ClosureComponent<WithId> {
   return () => ({ oninit, view });
 
@@ -33,7 +35,11 @@ export function getProjectView({
       return m(getNotFound(), { homePath });
     }
 
-    const { title, sub, link, imagePath, features, description } = project.value;
+    const { title, sub, link: maybeLink, imagePath, features, description } = project.value;
+    const isLinkExternal = !maybeLink.startsWith('!');
+    const link = isLinkExternal
+      ? maybeLink
+      : routeMap[maybeLink.substring(1)].path;
 
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0',
       [
@@ -45,10 +51,7 @@ export function getProjectView({
           m('.mgn-l-2-0', [
             m('.typo-s-h2.mgn-b-0-5.dsp-flex.flx-a-c', [
               m('span', title),
-              link !== '' && m('a.typo-s-h2.sur-fg-3.link', {
-                href: link,
-                target: '_blank',
-              }, [
+              getLink(link, isLinkExternal, [
                 m('i.fi-xnlxxm-external-link.typo-s-h4.dsp-flex.mgn-l-0-5', [
                   m(getIcon(), { iconName: 'external-link', optionsMask: 'xnlxxm' }),
                 ]),
@@ -58,7 +61,7 @@ export function getProjectView({
 
             m(m.route.Link, {
               href: listPath,
-              selector: '.dsp-flex.flx-a-c.link.sur-fg-3.mgn-b-2-0',
+              selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3.mgn-b-2-0',
             }, [
               m('i.fi-xnslxl-arrow-simple.dsp-flex', [
                 m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
@@ -76,5 +79,22 @@ export function getProjectView({
           )),
         ]),
       ]);
+
+    function getLink(href: string, isExternal: boolean, children: m.Children) {
+      if (href === '') {
+        return null;
+      }
+      const selector = 'a.typo-s-h2.sur-fg-3.link';
+      if (isExternal) {
+        return m(selector, {
+          href,
+          target: '_blank',
+        }, children);
+      }
+      return m(m.route.Link, {
+        href,
+        selector,
+      }, children);
+    }
   }
 }

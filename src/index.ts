@@ -51,8 +51,11 @@ getRoute().then((route) => {
     homePath,
     listPath: route.project.path,
     project: getStrictAttributeModel<ProjectEntry>(initialProjectEntry),
+    routeMap: route,
   });
-  const tableVirtualizationDemoView = getTableVirtualizationDemo();
+  const tableVirtualizationDemoView = getTableVirtualizationDemo({
+    returnPath: route.project.path,
+  });
 
   m.route.prefix = '#';
   m.route(document.body, route.about.path, {
@@ -83,7 +86,7 @@ getRoute().then((route) => {
       render: (vnode) => m(layout, m(projectView, vnode.attrs)),
     },
     [route.tableVirtualization.path]: {
-      render: () => m(layout, m(tableVirtualizationDemoView, '')),
+      render: () => m(layout, m(tableVirtualizationDemoView)),
     },
   });
 

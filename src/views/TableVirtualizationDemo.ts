@@ -1,6 +1,11 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
+import getIcon from './FriconixIcon.js';
 
 const observerRootSelector = '.observed-root';
+
+interface WithReturnPath {
+  returnPath: string;
+}
 
 interface Viewport {
   /** initially height, but can be width when we add the support */
@@ -13,11 +18,13 @@ const startLowerCaseAOffset = 97;
 const alphabetList = Array.from(new Array(26)).map(
   (_, index) => String.fromCharCode(startLowerCaseAOffset + index),
 );
-const rootSelector = `.hgt-7-0.box-s-s.box-w-1.oflo-hx-ay.mgn-l-4-0${observerRootSelector}`;
+const rootSelector = `.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1${observerRootSelector}`;
 
 const initialEntrySize = 0;
 let viewport: Viewport = { offset: 0, size: 6, entrySize: initialEntrySize };
-export default function getTableVirtualizationDemo(): m.ClosureComponent {
+export default function getTableVirtualizationDemo({
+  returnPath,
+}: WithReturnPath): m.ClosureComponent {
   let observer: IntersectionObserver;
 
   return () => ({ oncreate, view });
@@ -57,14 +64,25 @@ export default function getTableVirtualizationDemo(): m.ClosureComponent {
     };
 
     const viewableList = getViewableList(alphabetList);
-    return m('.test', [
-      m('.dsp-flex.flx-a-c.flx-j-c', [
-        m('.simple-table', [
-          m('.hgt-7-0.box-s-s.box-w-1.oflo-hx-ay', alphabetList.map(
+    return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0.pad-t-0-5.sur-bg-2', [
+      m(m.route.Link, {
+        href: returnPath,
+        selector: '.dsp-flex.flx-a-c.link.sur-fg-3.pad-l-1-0',
+      }, [
+        m('i.fi-xnslxl-arrow-simple.dsp-flex', [
+          m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
+        ]),
+        m('.typo-s-h5', 'back to list'),
+      ]),
+      m('.dsp-flex.flx-a-c.flx-j-c.flx-rap', [
+        m('.simple-table.mgn-l-2-0.mgn-r-2-0.mgn-b-2-0', [
+          m('.mgn-b-0-5', 'Vanilla list of letters'),
+          m('.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1', alphabetList.map(
             (content) => m('.wid-16-0.typo-s-ctr', content),
           )),
         ]),
-        m('.virtualized-table', [
+        m('.virtualized-table.mgn-l-2-0.mgn-r-2-0.mgn-b-2-0', [
+          m('.mgn-b-0-5', 'Virtual list of letters'),
           viewport.entrySize === 0
             ? m(rootSelector, viewableList.map(
               (content) => m('.wid-16-0.typo-s-ctr',
@@ -80,8 +98,14 @@ export default function getTableVirtualizationDemo(): m.ClosureComponent {
             ]),
         ]),
       ]),
-      m('.sur-bg-2', [
-        m('', `text text text ${alphabetList.join(' ')}`),
+      m('.pad-1-0', [
+        m('p', 'List virtualization is a way to reduce off-screen elements drawn by the browser.  The lesser the elements the browser has to take care of, the more resources it will have to support the more important portions of the page.'),
+        m('p', 'In the vanilla list of letters to the left, the browser has to draw an element for each letter, a to z. At any one time, all of these 26 letters are present in that section and some parts, around six or seven letters, of it will be shown when the user scrolls the list.'),
+        m('p', 'Although the vanilla and virtualized lists look identical, the virtualized list on the right has 11 elements available at any one time.  The set of elements shown changes depending on where the user scrolls.  This method eliminates more that 50% of the elements that the browser needs to keep.'),
+        m('hr.sur-fg-100'),
+        m('.typo-s-h2', 'The technical nitty-gritty'),
+        m('p', 'We can think of the list virtualizer as a bi-directional sliding window with the input as the scroll amount of the user and the output as a subset of available data.  All the data is present and available at the time but not rendered.  This sliding window differentiates what subset gets rendered to the browser.'),
+        m('p', '(WIP)'),
       ]),
     ]);
   }
