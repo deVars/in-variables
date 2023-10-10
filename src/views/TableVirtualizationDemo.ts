@@ -67,7 +67,7 @@ export default function getTableVirtualizationDemo({
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0.pad-t-0-5.sur-bg-2', [
       m(m.route.Link, {
         href: returnPath,
-        selector: '.dsp-flex.flx-a-c.link.sur-fg-3.pad-l-1-0',
+        selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3.pad-l-1-0',
       }, [
         m('i.fi-xnslxl-arrow-simple.dsp-flex', [
           m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
@@ -101,7 +101,7 @@ export default function getTableVirtualizationDemo({
       m('.pad-1-0', [
         m('p', 'List virtualization is a way to reduce off-screen elements drawn by the browser.  The lesser the elements the browser has to take care of, the more resources it will have to support the more important portions of the page.'),
         m('p', 'In the vanilla list of letters to the left, the browser has to draw an element for each letter, a to z. At any one time, all of these 26 letters are present in that section and some parts, around six or seven letters, of it will be shown when the user scrolls the list.'),
-        m('p', 'Although the vanilla and virtualized lists look identical, the virtualized list on the right has 11 elements available at any one time.  The set of elements shown changes depending on where the user scrolls.  This method eliminates more that 50% of the elements that the browser needs to keep.'),
+        m('p', 'Although the vanilla and virtualized lists look identical, the virtualized list on the right has 11 elements available at any one time.  The set of elements shown changes depending on where the user scrolls.  This method eliminates more than 50% of the elements that the browser needs to keep.'),
         m('hr.sur-fg-100'),
         m('.typo-s-h2', 'The technical nitty-gritty'),
         m('p', 'We can think of the list virtualizer as a bi-directional sliding window with the input as the scroll amount of the user and the output as a subset of available data.  All the data is present and available at the time but not rendered.  This sliding window differentiates what subset gets rendered to the browser.'),
