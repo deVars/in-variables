@@ -5,6 +5,7 @@
 @import url('./styles/typo.css');
 
 :root {
+  color-scheme: light dark;
   --fg-color-1: oklch(0.4 2% 280);
   --fg-color-2: oklch(0.7 32% 280);
   --fg-color-3: oklch(0.6 3% 280);
@@ -19,7 +20,7 @@
   --bg-color-3: oklch(0.85 5% 280);
 }
 
-:root[og] {
+[data-is-dark-theme='1'] {
   --fg-color-1: oklch(0.8 2% 90);
   --fg-color-2: oklch(0.9 12% 90);
   --fg-color-3: oklch(0.6 2% 90);

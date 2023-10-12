@@ -25,6 +25,7 @@ export function appendSkillTree({ root, selector, skills }: SkillView): void {
   drawnNodes.call(drag(simulation));
   simulation.on('tick', ticked);
 
+  d3Select.select(selector).selectAll('*').remove();
   d3Select.select(selector).append(() => svg.node());
 
   function ticked() {

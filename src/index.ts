@@ -15,6 +15,7 @@ import getProjectsView from './views/Projects.js';
 import { initialProjectEntry, type ProjectEntry } from './models/Project.js';
 import { getProjectView } from './views/Project.js';
 import getTableVirtualizationDemo from './views/TableVirtualizationDemo.js';
+import { getIsInitialThemeDark } from './views/helpers/Theme.js';
 
 declare global {
   interface Window {
@@ -24,11 +25,12 @@ declare global {
   }
 }
 
+const isDarkTheme = getStrictAttributeModel<boolean>(getIsInitialThemeDark());
 m.render(document.body, m('.sur-bg-1.sur-fg-1.typo-std', 'loading'));
 
 getRoute().then((route) => {
   const homePath = route.about.path;
-  const layout = getLayout(route);
+  const layout = getLayout({ routeMap: route, isDarkTheme });
   const skillView = getSkillView({
     root: getAttributeModel<HierarchyNode<SkillEntry>>(null),
     selector: '.skill-root',
@@ -102,4 +104,3 @@ getRoute().then((route) => {
     return m.route.set(path, { id });
   }
 });
-
