@@ -5,6 +5,21 @@
 @import url('./styles/typo.css');
 
 :root {
+  --fg-color-1: oklch(0.4 2% 280);
+  --fg-color-2: oklch(0.7 32% 280);
+  --fg-color-3: oklch(0.6 3% 280);
+  --fg-color-4: oklch(0.6 8% 33);
+  --fg-color-10: oklch(0.35 0% 0);
+  --fg-color-100: oklch(0.75 0% 0);
+  --fg-color-101: oklch(0.955 3% 280); /** surface 2 for borders */
+  --fg-color-102: oklch(0.85 22% 280);
+  --i-fg-color-1: oklch(0.25 0% 0);
+  --bg-color-1: oklch(0.98 0% 280);
+  --bg-color-2: oklch(0.955 3% 280);
+  --bg-color-3: oklch(0.85 5% 280);
+}
+
+:root[og] {
   --fg-color-1: oklch(0.8 2% 90);
   --fg-color-2: oklch(0.9 12% 90);
   --fg-color-3: oklch(0.6 2% 90);
