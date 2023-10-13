@@ -69,7 +69,7 @@ export function getProjectView({
               m('.typo-s-h5', 'back to list'),
             ]),
             m('.dsp-flex.flx-rap.typo-mono.typo-s-h6', features.map(
-              (feature) => m('.box-c-100.box-rad-0-5.box-w-1.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
+              (feature) => m('.box-c-103.box-rad-0-5.box-w-1.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
             )),
           ]),
         ]),

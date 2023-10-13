@@ -6,18 +6,38 @@
 
 :root {
   color-scheme: light dark;
-  --fg-color-1: oklch(0.4 2% 280);
-  --fg-color-2: oklch(0.7 32% 280);
-  --fg-color-3: oklch(0.6 3% 280);
+  --fg-color-1: oklch(0.4 2% 85);
+  --fg-color-2: oklch(0.7 32% 70);
+  --fg-color-3: oklch(0.65 3% 80);
   --fg-color-4: oklch(0.6 8% 33);
   --fg-color-10: oklch(0.35 0% 0);
-  --fg-color-100: oklch(0.75 0% 0);
+  --fg-color-100: oklch(0.925 0% 0);
+  --fg-color-101: oklch(0.955 3% 85); /** surface 2 for borders */
+  --fg-color-102: oklch(0.85 22% 85);
+  --fg-color-103: oklch(0.6 18% 85);
+  --i-fg-color-1: oklch(0.25 0% 0);
+  --bg-color-1: oklch(0.98 0% 85);
+  --bg-color-2: oklch(0.955 2.5% 85);
+  --bg-color-3: oklch(0.935 3% 80);
+  --bg-color-4: oklch(0.985 0% 0);
+}
+
+[data-theme='purple'] {
+  color-scheme: light dark;
+  --fg-color-1: oklch(0.4 2% 280);
+  --fg-color-2: oklch(0.7 32% 280);
+  --fg-color-3: oklch(0.5 32% 280);
+  --fg-color-4: oklch(0.6 8% 33);
+  --fg-color-10: oklch(0.35 0% 0);
+  --fg-color-100: oklch(0.925 0% 0);
   --fg-color-101: oklch(0.955 3% 280); /** surface 2 for borders */
   --fg-color-102: oklch(0.85 22% 280);
+  --fg-color-103: oklch(0.6 18% 280);
   --i-fg-color-1: oklch(0.25 0% 0);
   --bg-color-1: oklch(0.98 0% 280);
-  --bg-color-2: oklch(0.955 3% 280);
-  --bg-color-3: oklch(0.85 5% 280);
+  --bg-color-2: oklch(0.955 2.5% 280);
+  --bg-color-3: oklch(0.955 17.5% 280);
+  --bg-color-4: oklch(0.985 0% 0);
 }
 
 [data-is-dark-theme='1'] {
@@ -29,10 +49,12 @@
   --fg-color-100: oklch(0.35 0% 0);
   --fg-color-101: oklch(0.275 0% 0); /** surface 2 for borders */
   --fg-color-102: oklch(0.9 12% 90);
+  --fg-color-103: oklch(0.35 0% 0);
   --i-fg-color-1: oklch(0.25 4% 90);
   --bg-color-1: oklch(0.25 0% 0);
   --bg-color-2: oklch(0.275 0% 0);
   --bg-color-3: oklch(0.30 0% 0);
+  --bg-color-4: oklch(0.30 0% 0);
 }
 
 body {
@@ -104,6 +126,10 @@ body {
 
 .sur-bg-3 {
   background-color: var(--bg-color-3);
+}
+
+.sur-bg-4 {
+  background-color: var(--bg-color-4);
 }
 
 .sur-fg-1 {

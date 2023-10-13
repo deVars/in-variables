@@ -16,7 +16,7 @@ export default function getLayout({ routeMap, isDarkTheme }: Layout): m.ClosureC
     const tabSelectorBase = '.link.dsp-i-b.pad-0-5.mgn-0.mgn-l-0-25.mgn-r-0-25.box-w-2.box-b-s-s.box-c-t';
     const themeIconName = isDarkTheme.value ? 'bulb-solid' : 'bulb-hollow';
     return m('.sur-bg-1.sur-fg-1.typo-std', [
-      m('.pad-t-0-5.sur-bg-3', [
+      m('.pad-t-0-5.sur-bg-4', [
         m('.wid-max.mgn-cntr', [
           m('.sur-fg-10.dsp-flex.flx-s-b', [
             m('section.typo-s-h1', 'in・Variables'),

@@ -75,7 +75,7 @@ export default function getJourneyEntryView({
         ]),
         m('.sur-bg-2.pad-1-0.pad-b-2-0', [
           m('.dsp-flex.flx-rap.typo-s-h6.typo-mono', features.map(
-            (feature) => m('.box-c-100.box-rad-0-5.box-w-1.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
+            (feature) => m('.box-c-103.box-rad-0-5.box-w-1.box-s-s.pad-0-5.mgn-r-0-5.mgn-b-0-5', feature),
           )),
           m('ul.sur-bg-2.pad-1-0', description.map(
             (descriptionLine) => m('li.mgn-b-0-5', descriptionLine),
