@@ -3,6 +3,7 @@ import { getInitialProjectEntries, type ProjectEntry } from '../models/Project.j
 import { type StrictAttributeModel } from '../models/AttributeModel.js';
 import type { WithOnClick } from './helpers/ComponentHandler';
 import Loading from './Loading.js';
+import getIcon from './FriconixIcon.js';
 
 export interface ProjectsView {
   projects: StrictAttributeModel<ProjectEntry[]>;
@@ -27,10 +28,10 @@ export default function getProjectsView({
 
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0', projects.map(({
       title, sub, imagePath,
-    }, index) => m('.link-card-b-101-102.box-l-s-s.box-w-8.pad-l-0-5', {
+    }, index) => m('.link-card-b-101-102.box-l-s-s.box-w-8.pad-l-0-5.mgn-b-2-0', {
       onclick: () => onclick(index),
     }, [
-      m('.link-card.sur-bg-2.pad-1-0.mgn-b-0-5.dsp-flex', [
+      m('.link-card.sur-bg-2.pad-t-1-0.pad-l-1-0.pad-r-1-0.pad-b-0-5.dsp-flex', [
         m('img.box-rad-0-5.wid-4-0.obj-fit-c', {
           src: `${assetsRoot}/${imagePath}`,
           loading: 'lazy',
@@ -39,6 +40,9 @@ export default function getProjectsView({
           m('.typo-s-h2.mgn-b-0-5', title),
           m('.typo-sub', sub),
         ]),
+      ]),
+      m('.link-card-detail-hint.sur-fg-3.typo-s-h4.typo-sub.typo-s-ctr', [
+        m(getIcon(), { iconName: 'double-chevron-wide', optionsMask: 'xnldxl' }),
       ]),
     ])));
   }

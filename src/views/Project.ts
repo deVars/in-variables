@@ -44,7 +44,7 @@ export function getProjectView({
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0',
       [
         m('.sur-bg-3.pad-1-0.dsp-flex', [
-          m('img.box-rad-0-5.obj-fit-c.wid-fl.wid-max-12-0', {
+          m('img.box-rad-0-5.obj-fit-c.wid-fl.wid-max-37-p', {
             src: `${assetsRoot}/${imagePath}`,
             loading: 'lazy',
           }, []),

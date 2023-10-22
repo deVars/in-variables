@@ -1,69 +1,32 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import getIcon from './FriconixIcon.js';
-
-const observerRootSelector = '.observed-root';
+import getListVirtualizer from './helpers/IntersectListener.js';
 
 interface WithReturnPath {
   returnPath: string;
-}
-
-interface Viewport {
-  /** initially height, but can be width when we add the support */
-  entrySize: number;
-  size: number;
-  offset: number;
 }
 
 const startLowerCaseAOffset = 97;
 const alphabetList = Array.from(new Array(26)).map(
   (_, index) => String.fromCharCode(startLowerCaseAOffset + index),
 );
-const rootSelector = `.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1${observerRootSelector}`;
+const largeCountList = Array.from(new Array(1000)).map(
+  (_, index) => index.toString(),
+);
 
-const initialEntrySize = 0;
-let viewport: Viewport = { offset: 0, size: 6, entrySize: initialEntrySize };
 export default function getTableVirtualizationDemo({
   returnPath,
 }: WithReturnPath): m.ClosureComponent {
-  let observer: IntersectionObserver;
+  const listVirtualizer = getListVirtualizer({
+    elementContents: alphabetList, rootMargin: '0px', onTriggerRedraw: m.redraw,
+  });
+  const largeCountListVirtualizer = getListVirtualizer({
+    elementContents: largeCountList, rootMargin: '0px', onTriggerRedraw: m.redraw,
+  });
 
-  return () => ({ oncreate, view });
-
-  function oncreate() {
-    const observerOptions = {
-      root: document.querySelector(observerRootSelector),
-      rootMargin: '0px',
-      threshold: 0.25,
-    };
-
-    observer = new IntersectionObserver(callback, observerOptions);
-  }
-
-  function getViewableList(list: string[]) {
-    const outOfViewElementCount = 2;
-    const { offset, size } = viewport;
-
-    /** needs 2x of buffers, so we have a safe buffer
-     *  + immediate buffer from top or bottom
-     */
-    const viewableWidth = offset + size + (2 * outOfViewElementCount);
-
-    return list.slice(offset, viewableWidth);
-  }
+  return () => ({ view });
 
   function view() {
-    const sliderHeightpx = Math.ceil(viewport.entrySize * alphabetList.length);
-    const styleSliderHeight = `height: ${sliderHeightpx}px;`;
-    const virtualElementHook = {
-      oncreate: (vnode: m.VnodeDOM) => observer.observe(vnode.dom),
-      onremove: (vnode: m.VnodeDOM) => observer.unobserve(vnode.dom),
-    };
-    const virtualElementHookWithStyle = {
-      ...virtualElementHook,
-      style: `top: ${viewport.entrySize * viewport.offset}px`,
-    };
-
-    const viewableList = getViewableList(alphabetList);
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0.pad-t-0-5.sur-bg-2', [
       m(m.route.Link, {
         href: returnPath,
@@ -83,17 +46,29 @@ export default function getTableVirtualizationDemo({
         ]),
         m('.virtualized-table.mgn-l-2-0.mgn-r-2-0.mgn-b-2-0', [
           m('.mgn-b-0-5', 'Virtual list of letters'),
-          viewport.entrySize === 0
-            ? m(rootSelector, viewableList.map(
-              (content) => m('.wid-16-0.typo-s-ctr',
-                virtualElementHook,
-                content),
+          listVirtualizer.isInitialized()
+            ? m('.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1', {
+              oncreate: (vnode: m.VnodeDOM) => listVirtualizer.setObserver(vnode.dom),
+              onremove: listVirtualizer.cleanUpObserver,
+            }, listVirtualizer.getViewableList().map(
+              (content) => m('.wid-16-0.typo-s-ctr', {
+                oncreate: (vnode: m.VnodeDOM) => listVirtualizer
+                  .getObserver()?.observe(vnode.dom),
+                onremove: (vnode: m.VnodeDOM) => listVirtualizer
+                  .getObserver()?.unobserve(vnode.dom),
+              }, content),
             ))
-            : m(rootSelector, [
-              m('.slider.wid-16-0.typo-s-ctr', { style: styleSliderHeight }, viewableList.map(
-                (content) => m('.pos-rel',
-                  virtualElementHookWithStyle,
-                  content),
+            : m('.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1', [
+              m('.slider.wid-16-0.typo-s-ctr', {
+                style: listVirtualizer.getSliderStyle(),
+              }, listVirtualizer.getViewableList().map(
+                (content) => m('', {
+                  oncreate: (vnode: m.VnodeDOM) => listVirtualizer
+                    .getObserver()?.observe(vnode.dom),
+                  onremove: (vnode: m.VnodeDOM) => listVirtualizer
+                    .getObserver()?.unobserve(vnode.dom),
+                  style: listVirtualizer.getElementStyle(),
+                }, content),
               )),
             ]),
         ]),
@@ -106,94 +81,35 @@ export default function getTableVirtualizationDemo({
         m('.typo-s-h2', 'The technical nitty-gritty'),
         m('p', 'We can think of the list virtualizer as a bi-directional sliding window with the input as the scroll amount of the user and the output as a subset of available data.  All the data is present and available at the time but not rendered.  This sliding window differentiates what subset gets rendered to the browser.'),
         m('p', '(WIP)'),
+        m('.virtualized-table.mgn-l-2-0.mgn-r-2-0.mgn-b-2-0', [
+          m('.mgn-b-0-5', '1000 entry list'),
+          largeCountListVirtualizer.isInitialized()
+            ? m('.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1', {
+              oncreate: (vnode: m.VnodeDOM) => largeCountListVirtualizer.setObserver(vnode.dom),
+              onremove: largeCountListVirtualizer.cleanUpObserver,
+            }, largeCountListVirtualizer.getViewableList().map(
+              (content) => m('.wid-16-0.typo-s-ctr', {
+                oncreate: (vnode: m.VnodeDOM) => largeCountListVirtualizer
+                  .getObserver()?.observe(vnode.dom),
+                onremove: (vnode: m.VnodeDOM) => largeCountListVirtualizer
+                  .getObserver()?.unobserve(vnode.dom),
+              }, content),
+            ))
+            : m('.hgt-7-0.box-s-s.box-c-100.box-w-1.oflo-hx-ay.sur-bg-1', [
+              m('.slider.wid-16-0.typo-s-ctr', {
+                style: largeCountListVirtualizer.getSliderStyle(),
+              }, largeCountListVirtualizer.getViewableList().map(
+                (content) => m('', {
+                  oncreate: (vnode: m.VnodeDOM) => largeCountListVirtualizer
+                    .getObserver()?.observe(vnode.dom),
+                  onremove: (vnode: m.VnodeDOM) => largeCountListVirtualizer
+                    .getObserver()?.unobserve(vnode.dom),
+                  style: largeCountListVirtualizer.getElementStyle(),
+                }, content),
+              )),
+            ]),
+        ]),
       ]),
     ]);
   }
-}
-const defaultRootBounds = { top: 0, height: 0 };
-function callback(entries: IntersectionObserverEntry[], _observer: IntersectionObserver) {
-  const isInitialChange = viewport.entrySize === initialEntrySize;
-  const isRenderUpdate = entries.length > viewport.size;
-  if (isInitialChange) {
-    viewport = getViewportParams(entries);
-    return m.redraw();
-  }
-
-  if (isRenderUpdate) {
-    return null;
-  }
-
-  const intersectIndex = getIntersectIndex(entries);
-  const newOffset = getOffsetFromIntersectIndex(intersectIndex);
-
-  if (newOffset === viewport.offset) {
-    return null;
-  }
-
-  viewport.offset = newOffset;
-  return m.redraw();
-}
-
-function getViewportParams(entries: IntersectionObserverEntry[]): Viewport {
-  let isViewableEntryFound = false;
-  let intersectIndex = 0;
-
-  if (entries.length === 0) {
-    return { offset: 0, size: 0, entrySize: 0 };
-  }
-
-  const [ entrySample ] = entries;
-  const viewableCount = Math.ceil(
-    (entrySample.rootBounds?.height ?? 0)
-    / entrySample.boundingClientRect.height,
-  );
-  const entrySize = entrySample.boundingClientRect.height;
-
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      if (!isViewableEntryFound) {
-        isViewableEntryFound = true;
-      }
-      return;
-    }
-    if (isViewableEntryFound) {
-      return;
-    }
-    intersectIndex += 1;
-  });
-  const offset = getOffsetFromIntersectIndex(intersectIndex);
-  return { offset, size: viewableCount, entrySize };
-}
-
-function getIntersectIndex(entries: IntersectionObserverEntry[]): number {
-  const [ sampleEntry ] = entries;
-  const { parentElement } = sampleEntry.target;
-  if (!parentElement) {
-    return 0;
-  }
-
-  const [ entry ] = getIsInTopRange(sampleEntry)
-    ? entries
-    : [ ...entries ].reverse();
-
-  const { top: parentTop } = parentElement.getBoundingClientRect();
-  const { top: rootTop, height: rootHeight } = entry.rootBounds ?? defaultRootBounds;
-  const { top: entryTop, height: entryHeight } = entry.boundingClientRect;
-  const rootTopBoundary = rootTop + entryHeight;
-  const isInTopRange = entryTop < rootTopBoundary;
-  const bottomDistance = isInTopRange ? 0 : rootHeight;
-  const distanceToTop = entryTop - parentTop - bottomDistance;
-  return Math.floor(distanceToTop / entryHeight);
-}
-
-function getIsInTopRange(entry: IntersectionObserverEntry) {
-  const { top: rootTop } = entry.rootBounds ?? defaultRootBounds;
-  const { top: entryTop, height: entryHeight } = entry.boundingClientRect;
-  const rootTopBoundary = rootTop + entryHeight;
-  return entryTop < rootTopBoundary;
-}
-
-const indexBufferCount = 2;
-function getOffsetFromIntersectIndex(index: number) {
-  return Math.max(index - indexBufferCount, 0);
 }
