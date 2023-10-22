@@ -3,6 +3,7 @@
 @import url('./styles/pad.css');
 @import url('./styles/virtual-table.css');
 @import url('./styles/typo.css');
+@import url('./styles/meter.css');
 
 :root {
   color-scheme: light dark;
@@ -34,6 +35,8 @@
   /*--bg-color-3: oklch(0.935 3% 80);*/
   --bg-color-4: oklch(98.5% 0 0);
   /*--bg-color-4: oklch(0.985 0% 0);*/
+  --bg-color-5: oklch(98.5% 0 0);
+  /*--bg-color-5: oklch(0.985 0% 0);*/
 }
 
 [data-theme='purple'] {
@@ -52,6 +55,7 @@
   --bg-color-2: oklch(0.955 2.5% 280);
   --bg-color-3: oklch(0.955 17.5% 280);
   --bg-color-4: oklch(0.985 0% 0);
+  --bg-color-5: oklch(0.985 0% 0);
 }
 
 [data-is-dark-theme='1'] {
@@ -83,6 +87,8 @@
   /*--bg-color-3: oklch(0.30 0% 0);*/
   --bg-color-4: oklch(30% 0 0);
   /*--bg-color-4: oklch(0.30 0% 0);*/
+  --bg-color-5: oklch(23% 0.004 90);
+  /*--bg-color-5: oklch(0.15 0% 0);*/
 }
 
 body {
@@ -107,6 +113,14 @@ body {
   background-color: var(--bg-color-3);
 }
 
+.link-card-detail-hint {
+  background: linear-gradient(0, var(--bg-color-1), var(--bg-color-2));
+}
+
+.link-card-detail-hint:hover {
+  background: linear-gradient(0, var(--bg-color-1), var(--bg-color-3));
+}
+
 .link-card-b-101-102 {
   cursor: pointer;
   border-color: var(--fg-color-101);
@@ -120,12 +134,16 @@ body {
   background-color: var(--bg-color-3);
 }
 
+.link-card-b-101-102:hover > .link-card-detail-hint {
+  background: linear-gradient(0, var(--bg-color-1), var(--bg-color-3));
+}
+
 .wid-max {
   max-width: 1024px;
 }
 
-.wid-max-12-0 {
-  max-width: 12rem;
+.wid-max-37-p {
+  max-width: 37%;
 }
 
 .wid-4-0 {
@@ -158,6 +176,10 @@ body {
 
 .sur-bg-4 {
   background-color: var(--bg-color-4);
+}
+
+.sur-bg-5 {
+  background-color: var(--bg-color-5);
 }
 
 .sur-fg-1 {
@@ -221,6 +243,10 @@ body {
 
 .obj-fit-c {
   object-fit: contain;
+}
+
+.hgt-flow {
+  height: 100%
 }
 
 .scl-suprt-img {

@@ -1,0 +1,42 @@
+.meter {
+  --bg-color: oklch(36% 0 0);
+  --good-color: oklch(84% 0.128 120);
+  --okay-color: oklch(80% 0.128 80);
+  --bad-color: oklch(76% 0.128 40);
+  -moz-appearance: initial;
+  height: 0.5rem;
+  border-radius: 0.5rem;
+  background-image: none;
+}
+
+@-moz-document url-prefix() {
+  .meter {
+    background-color: var(--bg-color);
+    height: 0.25rem;
+  }
+}
+
+.meter::-webkit-meter-bar {
+  border-style: none;
+  border-width: 0;
+}
+
+.meter::-webkit-meter-optimum-value {
+  background-image: none;
+  background-color: var(--good-color);
+}
+
+.meter::-moz-meter-bar {
+  background-image: none;
+  background-color: var(--good-color);
+}
+
+.meter::-webkit-meter-even-less-good-value, .meter:-moz-meter-sub-optimum::-moz-meter-bar {
+  background-image: none;
+  background-color: var(--okay-color);
+}
+
+.meter::-webkit-meter-suboptimum-value, .meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+  background-image: none;
+  background-color: var(--bad-color);
+}

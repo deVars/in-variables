@@ -16,6 +16,8 @@ import { initialProjectEntry, type ProjectEntry } from './models/Project.js';
 import { getProjectView } from './views/Project.js';
 import getTableVirtualizationDemo from './views/TableVirtualizationDemo.js';
 import { getIsInitialThemeDark } from './views/helpers/Theme.js';
+import getProjectLayout from './views/ProjectLayout.js';
+import getQContent from './views/Q/Q.js';
 
 declare global {
   interface Window {
@@ -58,6 +60,7 @@ getRoute().then((route) => {
   const tableVirtualizationDemoView = getTableVirtualizationDemo({
     returnPath: route.project.path,
   });
+  const Q = getQContent();
 
   m.route.prefix = '#';
   m.route(document.body, route.about.path, {
@@ -89,6 +92,14 @@ getRoute().then((route) => {
     },
     [route.tableVirtualization.path]: {
       render: () => m(layout, m(tableVirtualizationDemoView)),
+    },
+    [route.experimental001.path]: {
+      render: () => m(getProjectLayout({
+        label: 'Experiment Q',
+        routeMap: route,
+      }), [
+        m(Q),
+      ]),
     },
   });
 

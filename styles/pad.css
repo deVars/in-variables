@@ -10,6 +10,10 @@
   padding-top: 4.0rem;
 }
 
+.pad-t-1-0 {
+  padding-top: 1.0rem;
+}
+
 .pad-t-0-5 {
   padding-top: 0.5rem;
 }
@@ -34,8 +38,16 @@
   padding-right: 2.0rem;
 }
 
+.pad-r-1-0 {
+  padding-right: 1.0rem;
+}
+
 .pad-b-3-0 {
   padding-bottom: 3.0rem;
+}
+
+.pad-b-0-5 {
+  padding-bottom: 0.5rem;
 }
 
 .mgn-0 {
