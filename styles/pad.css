@@ -14,6 +14,10 @@
   padding-top: 1.0rem;
 }
 
+.pad-t-0-75 {
+  padding-top: 0.75rem;
+}
+
 .pad-t-0-5 {
   padding-top: 0.5rem;
 }
@@ -42,8 +46,16 @@
   padding-right: 1.0rem;
 }
 
+.pad-r-0-5 {
+  padding-right: 0.5rem;
+}
+
 .pad-b-3-0 {
   padding-bottom: 3.0rem;
+}
+
+.pad-b-0-75 {
+  padding-bottom: 0.75rem;
 }
 
 .pad-b-0-5 {

@@ -9,10 +9,20 @@
   background-image: none;
 }
 
+.meter--limited-count-internal {
+  width: calc(100% - 0.5rem);
+  margin: 0 0.25rem;
+  position: absolute;
+  bottom: 1.9rem;
+}
+
 @-moz-document url-prefix() {
   .meter {
     background-color: var(--bg-color);
     height: 0.25rem;
+  }
+  .meter--limited-count-internal {
+    bottom: 2.1rem;
   }
 }
 
