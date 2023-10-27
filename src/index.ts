@@ -18,6 +18,7 @@ import getTableVirtualizationDemo from './views/TableVirtualizationDemo.js';
 import { getIsInitialThemeDark } from './views/helpers/Theme.js';
 import getProjectLayout from './views/ProjectLayout.js';
 import getQContent from './views/Q/Q.js';
+import getWordShuffle from './views/WordShuffle/WordShuffle.js';
 
 declare global {
   interface Window {
@@ -60,7 +61,18 @@ getRoute().then((route) => {
   const tableVirtualizationDemoView = getTableVirtualizationDemo({
     returnPath: route.project.path,
   });
+  const QLayout = getProjectLayout({
+    label: 'Experiment Q',
+    subLabel: 'cool things to try on HTML 5',
+    routeMap: route,
+  });
   const Q = getQContent();
+  const WordShuffleLayout = getProjectLayout({
+    label: 'Word Shuffle',
+    subLabel: 'Solve today\'s shuffled mystery word',
+    routeMap: route,
+  })
+  const WordShuffle = getWordShuffle();
 
   m.route.prefix = '#';
   m.route(document.body, route.about.path, {
@@ -94,11 +106,13 @@ getRoute().then((route) => {
       render: () => m(layout, m(tableVirtualizationDemoView)),
     },
     [route.experimental001.path]: {
-      render: () => m(getProjectLayout({
-        label: 'Experiment Q',
-        routeMap: route,
-      }), [
+      render: () => m(QLayout, [
         m(Q),
+      ]),
+    },
+    [route.wordShuffle.path]: {
+      render: () => m(WordShuffleLayout, [
+        m(WordShuffle),
       ]),
     },
   });

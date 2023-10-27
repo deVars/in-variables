@@ -4,6 +4,7 @@
 @import url('./styles/virtual-table.css');
 @import url('./styles/typo.css');
 @import url('./styles/meter.css');
+@import url('./styles/word-shuffle.css');
 
 :root {
   color-scheme: light dark;

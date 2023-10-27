@@ -38,6 +38,10 @@
   border-color: var(--fg-color-2);
 }
 
+.box-c-3 {
+  border-color: var(--fg-color-3);
+}
+
 .box-c-100 {
   border-color: var(--fg-color-100);
 }
