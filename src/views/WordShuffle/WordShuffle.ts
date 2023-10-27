@@ -29,7 +29,8 @@ const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr`;
 let questionLetters: QuestionTile[] = getNewQuestionTiles(session.question);
 let attemptLetters: string[] = questionLetters.map(() => '');
 export default function getWordShuffle(): m.ClosureComponent {
-  const letterTileSwitchOnKeyUp = { handleEvent: handleTileInput };
+  const tileSwitcher = { handleEvent: updateTileFocus };
+  const tileInputUpdater = { handleEvent: updateAttemptLetters };
 
   return () => ({ view });
 
@@ -62,7 +63,8 @@ export default function getWordShuffle(): m.ClosureComponent {
             spellcheck: false,
             'data-index': index,
             autofocus: index === 0,
-            onkeyup: letterTileSwitchOnKeyUp,
+            oninput: tileInputUpdater,
+            onkeyup: tileSwitcher,
             enterkeyhint: index === questionLetters.length - 1
               ? 'done'
               : 'next',
@@ -152,7 +154,8 @@ function getStatusLabel(status: AttemptStatus) {
   return labelMap[status];
 }
 
-function handleTileInput({ currentTarget, key }: KeyboardEvent) {
+function updateTileFocus(event: KeyboardEvent) {
+  const { currentTarget, key } = event;
   if (!isHTMLInputElement(currentTarget)) {
     return;
   }
@@ -161,9 +164,8 @@ function handleTileInput({ currentTarget, key }: KeyboardEvent) {
     if (currentTarget.value === '') {
       return;
     }
+    updateUsedTiles(event);
     if (isHTMLElement(currentTarget.nextElementSibling)) {
-      maybeEnableIsUsedOnTiles(questionLetters, currentTarget.value);
-      session.attemptStatus = AttemptStatus.attempting;
       currentTarget.nextElementSibling.focus();
       return;
     }
@@ -185,15 +187,39 @@ function handleTileInput({ currentTarget, key }: KeyboardEvent) {
     if (isHTMLElement(currentTarget.previousElementSibling)) {
       currentTarget.previousElementSibling.focus();
     }
-    return;
+    // return;
   }
-
-  if (key.length > 1) {
-    return;
-  }
-
-  attemptLetters[dataIndex] = currentTarget.value;
   // console.log('key', key, currentTarget.getAttribute('data-index'), currentTarget.value);
+}
+
+function updateUsedTiles({ currentTarget }: Event) {
+  if (!isHTMLInputElement(currentTarget)) {
+    console.error('Unexpected wrong element type for updating attempt tiles.');
+    return;
+  }
+  maybeEnableIsUsedOnTiles(questionLetters, currentTarget.value);
+  if (session.attemptStatus !== AttemptStatus.attempting) {
+    session.attemptStatus = AttemptStatus.attempting;
+  }
+}
+
+function updateAttemptLetters({ currentTarget, data }: InputEvent) {
+  if (!isHTMLInputElement(currentTarget)) {
+    console.error('Unexpected wrong element type for updating attempt tiles.');
+    return;
+  }
+  const dataIndex = Number(currentTarget.getAttribute('data-index'));
+  if (Number.isNaN(dataIndex)) {
+    console.error('Unexpected empty value for tile index');
+    return;
+  }
+
+  if (data === '' || data === null) {
+    maybeDisableIsUsedOnTiles(questionLetters, attemptLetters[dataIndex]);
+    attemptLetters[dataIndex] = '';
+    return;
+  }
+  attemptLetters[dataIndex] = currentTarget.value;
 }
 
 function isHTMLElement(target: EventTarget | null): target is HTMLElement {
