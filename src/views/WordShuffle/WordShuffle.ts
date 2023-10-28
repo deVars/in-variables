@@ -1,16 +1,20 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
+import Loading from '../Loading.js';
 
-interface Session {
+interface BaseSession {
   question: string;
   answer: string;
-  questionTiles: QuestionTile[];
-  attemptLetters: string[];
   attempts: string[];
   attemptStatus: AttemptStatus;
 }
 
+interface Session extends BaseSession {
+  questionTiles: QuestionTile[];
+  attemptLetters: string[];
+}
+
 enum AttemptStatus {
-  initial, attempting, badAttempt, success, fail, over,
+  pendingLoad, initial, loaded, attempting, badAttempt, success, fail, over,
 }
 
 const emptySession: Session = {
@@ -19,7 +23,7 @@ const emptySession: Session = {
   questionTiles: [],
   attemptLetters: [],
   attempts: [],
-  attemptStatus: AttemptStatus.initial,
+  attemptStatus: AttemptStatus.pendingLoad,
 };
 
 interface QuestionTile {
@@ -27,6 +31,7 @@ interface QuestionTile {
   isUsedInAttempt: boolean;
 }
 
+const storageKey = 'words-shuffle';
 const tileSel = '.wid-1-0.pad-0-5.box-w-1.box-rad-0-25.box-s-s';
 const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr`;
 let session = emptySession;
@@ -35,11 +40,15 @@ export default function getWordShuffle(): m.ClosureComponent {
   const tileInputUpdater = { handleEvent: updateAttemptLetters };
   return () => ({
     view,
-    oninit: () => getSession(true)
+    oninit: () => getSession(window.env === 'dev')
       .then((newSession) => { session = newSession; }),
   });
 
   function view() {
+    if (session.attemptStatus === AttemptStatus.pendingLoad) {
+      return m(Loading());
+    }
+
     const isDisabled = session.attemptStatus === AttemptStatus.success
       || session.attemptStatus === AttemptStatus.over;
     const maybeDisabledClasses = isDisabled
@@ -79,7 +88,7 @@ export default function getWordShuffle(): m.ClosureComponent {
         getStatusLabel(session.attemptStatus),
       ]),
       session.attemptStatus === AttemptStatus.initial
-        && session.attempts.length < 1
+        || session.attempts.length < 1
         ? null
         : m('.typo-s-ctr.mgn-b-2-0.sur-fg-1', [
           m('.typo-s-h6.mgn-b-0-5.sur-fg-3', 'Previous attempts'),
@@ -110,6 +119,7 @@ function checkAttempt(attempt: string[]) {
   }
 
   const attemptWord = attempt.join('');
+  session.attempts.push(attemptWord);
   if (attemptWord !== session.answer) {
     const maybeStartTile = document.querySelector('input.try:first-of-type');
     if (!isHTMLInputElement(maybeStartTile)) {
@@ -117,16 +127,17 @@ function checkAttempt(attempt: string[]) {
       return false;
     }
     session.attemptLetters = session.answer.split('').map(() => '');
-    session.attempts.push(attemptWord);
     maybeStartTile.focus();
     session.attemptStatus = session.attempts.length < 6
       ? AttemptStatus.fail
       : AttemptStatus.over;
+    updateSession(session);
     m.redraw();
     return true;
   }
 
   session.attemptStatus = AttemptStatus.success;
+  window.localStorage.setItem(storageKey, JSON.stringify(session));
   m.redraw();
   return true;
 }
@@ -151,17 +162,37 @@ function getNewQuestionTiles(question: string): QuestionTile[] {
 async function getSession(isMock: boolean) {
   if (isMock) {
     await new Promise((resolve) => { setTimeout(resolve, 2000); });
-    const question = 'nsmakmiler';
+    const maybeStoredSession = window.localStorage.getItem(storageKey);
+    const mockQuestion = 'nsmakmiler';
     const mock = {
-      question,
+      question: mockQuestion,
       answer: 'slammerkin',
-      questionTiles: getNewQuestionTiles(question),
-      attemptLetters: question.split('').map(() => ''),
+      questionTiles: getNewQuestionTiles(mockQuestion),
+      attemptLetters: mockQuestion.split('').map(() => ''),
       attempts: [],
       // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
       attemptStatus: AttemptStatus.initial,
     };
-    const mockPromise = Promise.resolve(mock);
+    if (maybeStoredSession === null) {
+      window.localStorage.setItem(storageKey, JSON.stringify(mock));
+    }
+    const baseSession: BaseSession = maybeStoredSession !== null
+      ? JSON.parse(maybeStoredSession)
+      : mock;
+    const { question, answer, attempts, attemptStatus } = baseSession;
+    const newSession: Session = {
+      question,
+      answer,
+      attempts,
+      attemptStatus: attemptStatus !== AttemptStatus.success
+        && attemptStatus !== AttemptStatus.over
+        && attempts.length > 0
+        ? AttemptStatus.loaded
+        : attemptStatus,
+      questionTiles: getNewQuestionTiles(question),
+      attemptLetters: answer.split('').map(() => ''),
+    };
+    const mockPromise = Promise.resolve(newSession);
     mockPromise.then(() => {
       m.redraw();
     });
@@ -184,7 +215,9 @@ async function getSession(isMock: boolean) {
 
 function getStatusLabel(status: AttemptStatus) {
   const labelMap: Record<AttemptStatus, string> = {
+    [AttemptStatus.pendingLoad]: '',
     [AttemptStatus.initial]: 'Try to solve the shuffled word within six turns.  Best of luck!',
+    [AttemptStatus.loaded]: 'Welcome back!',
     [AttemptStatus.attempting]: '',
     [AttemptStatus.badAttempt]: 'Some tiles are empty.  Please fill them up.',
     [AttemptStatus.success]: 'Congratulations!',
@@ -192,6 +225,12 @@ function getStatusLabel(status: AttemptStatus) {
     [AttemptStatus.over]: 'Used up all the attempts. Try again tomorrow.',
   };
   return labelMap[status];
+}
+
+function updateSession(sessionToUpdate: Session) {
+  const { question, answer, attemptStatus, attempts } = sessionToUpdate;
+  const sessionState: BaseSession = { answer, attempts, attemptStatus, question };
+  window.localStorage.setItem(storageKey, JSON.stringify(sessionState));
 }
 
 function updateTileFocus(event: KeyboardEvent) {

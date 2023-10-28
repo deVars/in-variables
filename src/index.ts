@@ -22,9 +22,7 @@ import getWordShuffle from './views/WordShuffle/WordShuffle.js';
 
 declare global {
   interface Window {
-    friconix_update: () => void;
-    paths: Record<string, string>;
-    shapes: Record<string, string>;
+    env: string;
   }
 }
 
