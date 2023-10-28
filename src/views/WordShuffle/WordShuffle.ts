@@ -3,6 +3,8 @@ import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 interface Session {
   question: string;
   answer: string;
+  questionTiles: QuestionTile[];
+  attemptLetters: string[];
   attempts: string[];
   attemptStatus: AttemptStatus;
 }
@@ -11,11 +13,12 @@ enum AttemptStatus {
   initial, attempting, badAttempt, success, fail, over,
 }
 
-const session: Session = {
-  question: 'nsmakmiler',
-  answer: 'slammerkin',
-  // attempts: [],
-  attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
+const emptySession: Session = {
+  question: '',
+  answer: '',
+  questionTiles: [],
+  attemptLetters: [],
+  attempts: [],
   attemptStatus: AttemptStatus.initial,
 };
 
@@ -26,13 +29,15 @@ interface QuestionTile {
 
 const tileSel = '.wid-1-0.pad-0-5.box-w-1.box-rad-0-25.box-s-s';
 const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr`;
-let questionLetters: QuestionTile[] = getNewQuestionTiles(session.question);
-let attemptLetters: string[] = questionLetters.map(() => '');
+let session = emptySession;
 export default function getWordShuffle(): m.ClosureComponent {
   const tileSwitcher = { handleEvent: updateTileFocus };
   const tileInputUpdater = { handleEvent: updateAttemptLetters };
-
-  return () => ({ view });
+  return () => ({
+    view,
+    oninit: () => getSession(true)
+      .then((newSession) => { session = newSession; }),
+  });
 
   function view() {
     const isDisabled = session.attemptStatus === AttemptStatus.success
@@ -42,14 +47,14 @@ export default function getWordShuffle(): m.ClosureComponent {
       : '';
 
     return m('', [
-      m('.mgn-t-4-0.typo-s-ctr', questionLetters
+      m('.mgn-t-4-0.typo-s-ctr', session.questionTiles
         .map((questionLetter, index) => {
           const baseClass = `.dsp-i-b${questionAnswerTileSel}`;
           const baseWithMargin = `${baseClass}${getMarginClass(index, session.answer.length)}`;
           const questionTileClass = `${baseWithMargin}${getIsTileUsedClass(questionLetter)}`;
           return m(questionTileClass, questionLetter.letter.toLocaleUpperCase());
         })),
-      m('.mgn-t-4-0.mgn-b-2-0.typo-s-ctr', attemptLetters
+      m('.mgn-t-4-0.mgn-b-2-0.typo-s-ctr', session.attemptLetters
         .map((attemptLetter, index) => (
           m(`input.try${questionAnswerTileSel}${maybeDisabledClasses}${getMarginClass(index, session.answer.length)}`, {
             value: attemptLetter, // keep letter as what is typed to lessen confusion
@@ -65,15 +70,16 @@ export default function getWordShuffle(): m.ClosureComponent {
             autofocus: index === 0,
             oninput: tileInputUpdater,
             onkeyup: tileSwitcher,
-            enterkeyhint: index === questionLetters.length - 1
+            enterkeyhint: index === session.questionTiles.length - 1
               ? 'done'
               : 'next',
           })
         ))),
-      m('.typo-s-ctr.mgn-t-0-5.mgn-b-0-5', [
+      m('.hgt-1-3.typo-s-ctr.mgn-t-0-5.mgn-b-0-5', [
         getStatusLabel(session.attemptStatus),
       ]),
       session.attemptStatus === AttemptStatus.initial
+        && session.attempts.length < 1
         ? null
         : m('.typo-s-ctr.mgn-b-2-0.sur-fg-1', [
           m('.typo-s-h6.mgn-b-0-5.sur-fg-3', 'Previous attempts'),
@@ -110,7 +116,7 @@ function checkAttempt(attempt: string[]) {
       console.error('Unexpected error.  Cannot find word tiles.');
       return false;
     }
-    attemptLetters = session.answer.split('').map(() => '');
+    session.attemptLetters = session.answer.split('').map(() => '');
     session.attempts.push(attemptWord);
     maybeStartTile.focus();
     session.attemptStatus = session.attempts.length < 6
@@ -142,6 +148,40 @@ function getNewQuestionTiles(question: string): QuestionTile[] {
     .map((letter) => ({ letter, isUsedInAttempt: false }));
 }
 
+async function getSession(isMock: boolean) {
+  if (isMock) {
+    await new Promise((resolve) => { setTimeout(resolve, 2000); });
+    const question = 'nsmakmiler';
+    const mock = {
+      question,
+      answer: 'slammerkin',
+      questionTiles: getNewQuestionTiles(question),
+      attemptLetters: question.split('').map(() => ''),
+      attempts: [],
+      // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
+      attemptStatus: AttemptStatus.initial,
+    };
+    const mockPromise = Promise.resolve(mock);
+    mockPromise.then(() => {
+      m.redraw();
+    });
+    return mockPromise;
+  }
+
+  const question = 'gdo';
+  const mock = {
+    question,
+    answer: 'dog',
+    questionTiles: getNewQuestionTiles(question),
+    attemptLetters: question.split('').map(() => ''),
+    attempts: [],
+    attemptStatus: AttemptStatus.initial,
+  };
+  const mockPromise = Promise.resolve(mock);
+  mockPromise.then(() => m.redraw());
+  return mockPromise;
+}
+
 function getStatusLabel(status: AttemptStatus) {
   const labelMap: Record<AttemptStatus, string> = {
     [AttemptStatus.initial]: 'Try to solve the shuffled word within six turns.  Best of luck!',
@@ -169,8 +209,8 @@ function updateTileFocus(event: KeyboardEvent) {
       currentTarget.nextElementSibling.focus();
       return;
     }
-    if (checkAttempt(attemptLetters)) {
-      questionLetters = getNewQuestionTiles(session.question);
+    if (checkAttempt(session.attemptLetters)) {
+      session.questionTiles = getNewQuestionTiles(session.question);
     }
     return;
   }
@@ -182,8 +222,8 @@ function updateTileFocus(event: KeyboardEvent) {
   }
 
   if (key === 'Backspace') {
-    maybeDisableIsUsedOnTiles(questionLetters, attemptLetters[dataIndex]);
-    attemptLetters[dataIndex] = '';
+    maybeDisableIsUsedOnTiles(session.questionTiles, session.attemptLetters[dataIndex]);
+    session.attemptLetters[dataIndex] = '';
     if (isHTMLElement(currentTarget.previousElementSibling)) {
       currentTarget.previousElementSibling.focus();
     }
@@ -197,7 +237,7 @@ function updateUsedTiles({ currentTarget }: Event) {
     console.error('Unexpected wrong element type for updating attempt tiles.');
     return;
   }
-  maybeEnableIsUsedOnTiles(questionLetters, currentTarget.value);
+  maybeEnableIsUsedOnTiles(session.questionTiles, currentTarget.value);
   if (session.attemptStatus !== AttemptStatus.attempting) {
     session.attemptStatus = AttemptStatus.attempting;
   }
@@ -215,11 +255,11 @@ function updateAttemptLetters({ currentTarget, data }: InputEvent) {
   }
 
   if (data === '' || data === null) {
-    maybeDisableIsUsedOnTiles(questionLetters, attemptLetters[dataIndex]);
-    attemptLetters[dataIndex] = '';
+    maybeDisableIsUsedOnTiles(session.questionTiles, session.attemptLetters[dataIndex]);
+    session.attemptLetters[dataIndex] = '';
     return;
   }
-  attemptLetters[dataIndex] = currentTarget.value;
+  session.attemptLetters[dataIndex] = currentTarget.value;
 }
 
 function isHTMLElement(target: EventTarget | null): target is HTMLElement {
