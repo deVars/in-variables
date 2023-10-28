@@ -84,7 +84,7 @@ export default function getWordShuffle(): m.ClosureComponent {
               : 'next',
           })
         ))),
-      m('.hgt-1-3.typo-s-ctr.mgn-t-0-5.mgn-b-0-5', [
+      m('.min-hgt-1-3.typo-s-ctr.mgn-t-0-5.mgn-b-0-5', [
         getStatusLabel(session.attemptStatus),
       ]),
       session.attemptStatus === AttemptStatus.initial

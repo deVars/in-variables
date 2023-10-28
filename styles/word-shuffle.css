@@ -2,6 +2,6 @@
   width: 1rem;
 }
 
-.hgt-1-3 {
-  height: 1.3rem;
+.min-hgt-1-3 {
+  min-height: 1.3rem;
 }
