@@ -33,7 +33,7 @@ interface QuestionTile {
 
 const storageKey = 'words-shuffle';
 const tileSel = '.wid-1-0.pad-0-5.box-w-1.box-rad-0-25.box-s-s';
-const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr`;
+const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr.sur-fg-1.sur-bg-4`;
 let session = emptySession;
 export default function getWordShuffle(): m.ClosureComponent {
   const tileSwitcher = { handleEvent: updateTileFocus };
@@ -236,7 +236,7 @@ async function getMockBaseSession(): Promise<BaseSession> {
 function getStatusLabel(status: AttemptStatus) {
   const labelMap: Record<AttemptStatus, string> = {
     [AttemptStatus.pendingLoad]: '',
-    [AttemptStatus.initial]: 'Try to solve the shuffled word within six turns.  Best of luck!',
+    [AttemptStatus.initial]: 'Try to solve the shuffled word within six tries.  Best of luck!',
     [AttemptStatus.loaded]: 'Welcome back!',
     [AttemptStatus.attempting]: '',
     [AttemptStatus.badAttempt]: 'Some tiles are empty.  Please fill them up.',

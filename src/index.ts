@@ -60,16 +60,18 @@ getRoute().then((route) => {
     returnPath: route.project.path,
   });
   const QLayout = getProjectLayout({
+    isDarkTheme,
     label: 'Experiment Q',
     subLabel: 'cool things to try on HTML 5',
     routeMap: route,
   });
   const Q = getQContent();
   const WordShuffleLayout = getProjectLayout({
+    isDarkTheme,
     label: 'Word Shuffle',
     subLabel: 'Solve today\'s shuffled mystery word',
     routeMap: route,
-  })
+  });
   const WordShuffle = getWordShuffle();
 
   m.route.prefix = '#';
