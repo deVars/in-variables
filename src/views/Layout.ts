@@ -9,6 +9,8 @@ interface Layout {
   isDarkTheme: StrictAttributeModel<boolean>;
 }
 
+const Icon = getIcon();
+
 export default function getLayout({ routeMap, isDarkTheme }: Layout): m.ClosureComponent {
   return (_vnode: m.Vnode) => ({ view });
 
@@ -26,14 +28,14 @@ export default function getLayout({ routeMap, isDarkTheme }: Layout): m.ClosureC
                   { onclick: () => isDarkTheme.set(toggleDarkLightTheme(isDarkTheme.value)) },
                   [
                     m('i.fi-cnluxm-bulb-solid.typo-s-h1.dsp-flex', [
-                      m(getIcon(), { iconName: themeIconName, optionsMask: 'cnluxm' }),
+                      m(Icon, { iconName: themeIconName, optionsMask: 'cnluxm' }),
                     ]),
                   ]),
                 m('a.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3',
                   { href: 'mailto:ross.is.hire.able036@passinbox.com' },
                   [
                     m('i.fi-xnlxxm-close-envelope.typo-s-h1.dsp-flex', [
-                      m(getIcon(), { iconName: 'close-envelope-solid', optionsMask: 'xnsxxm' }),
+                      m(Icon, { iconName: 'close-envelope-solid', optionsMask: 'xnsxxm' }),
                     ]),
                   ]),
               ]),
