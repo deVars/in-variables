@@ -1,7 +1,7 @@
 import { type KVNamespace, type EventContext } from '@cloudflare/workers-types';
 
 interface Env {
-  KV: KVNamespace;
+  dv_pre_us: KVNamespace;
 }
 
 const secondsPerDay = 86400;
@@ -11,7 +11,7 @@ export async function onRequestGet(
   context: EventContext<Env, string, Record<string, unknown>>,
 ): Promise<Response> {
   const day = Math.floor(Date.now() / secondsPerDay / millisPerSecond);
-  const wordListJson = await context.env.KV.get('dv_pre_us:words');
+  const wordListJson = await context.env.dv_pre_us.get('words');
   if (wordListJson === null) {
     return new Response(JSON.stringify({
       words: [],
