@@ -160,57 +160,77 @@ function getNewQuestionTiles(question: string): QuestionTile[] {
 }
 
 async function getSession(isMock: boolean) {
-  if (isMock) {
-    await new Promise((resolve) => { setTimeout(resolve, 2000); });
-    const maybeStoredSession = window.localStorage.getItem(storageKey);
-    const mockQuestion = 'nsmakmiler';
-    const mock = {
-      question: mockQuestion,
-      answer: 'slammerkin',
-      questionTiles: getNewQuestionTiles(mockQuestion),
-      attemptLetters: mockQuestion.split('').map(() => ''),
-      attempts: [],
-      // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
-      attemptStatus: AttemptStatus.initial,
-    };
-    if (maybeStoredSession === null) {
-      window.localStorage.setItem(storageKey, JSON.stringify(mock));
-    }
-    const baseSession: BaseSession = maybeStoredSession !== null
-      ? JSON.parse(maybeStoredSession)
-      : mock;
-    const { question, answer, attempts, attemptStatus } = baseSession;
-    const newSession: Session = {
-      question,
-      answer,
-      attempts,
-      attemptStatus: attemptStatus !== AttemptStatus.success
-        && attemptStatus !== AttemptStatus.over
-        && attempts.length > 0
-        ? AttemptStatus.loaded
-        : attemptStatus,
-      questionTiles: getNewQuestionTiles(question),
-      attemptLetters: answer.split('').map(() => ''),
-    };
-    const mockPromise = Promise.resolve(newSession);
-    mockPromise.then(() => {
-      m.redraw();
-    });
-    return mockPromise;
+  const recentSession = await getRecentSession(isMock);
+  const { question, answer, attempts, attemptStatus } = recentSession;
+
+  const newSession: Session = {
+    question,
+    answer,
+    attempts,
+    attemptStatus: attemptStatus !== AttemptStatus.success
+    && attemptStatus !== AttemptStatus.over
+    && attempts.length > 0
+      ? AttemptStatus.loaded
+      : attemptStatus,
+    questionTiles: getNewQuestionTiles(question),
+    attemptLetters: answer.split('').map(() => ''),
+  };
+
+  if (!isMock) {
+    return newSession;
   }
 
-  const question = 'gdo';
-  const mock = {
-    question,
-    answer: 'dog',
-    questionTiles: getNewQuestionTiles(question),
-    attemptLetters: question.split('').map(() => ''),
+  const mockSessionPromise = Promise.resolve(newSession);
+  mockSessionPromise.then(() => { m.redraw(); });
+  return mockSessionPromise;
+}
+
+async function getRecentSession(isMock: boolean): Promise<BaseSession> {
+  const baseSession = isMock
+    ? await getMockBaseSession()
+    : await getBaseSession();
+
+  const maybeStoredSession = window.localStorage.getItem(storageKey);
+
+  if (maybeStoredSession === null) {
+    window.localStorage.setItem(storageKey, JSON.stringify(baseSession));
+  }
+
+  const storedSession = maybeStoredSession !== null
+    ? JSON.parse(maybeStoredSession)
+    : baseSession;
+  return baseSession.answer !== storedSession.answer
+    ? baseSession
+    : storedSession;
+}
+
+interface QuestionSet{
+  word: string;
+  shuffled: string;
+}
+async function getBaseSession(): Promise<BaseSession> {
+  const { words } = await m.request<{words: QuestionSet[]}>({
+    url: '/word-shuffle/word/get',
+  });
+  const [ question ] = words;
+  return {
+    question: question.shuffled,
+    answer: question.word,
     attempts: [],
     attemptStatus: AttemptStatus.initial,
   };
-  const mockPromise = Promise.resolve(mock);
-  mockPromise.then(() => m.redraw());
-  return mockPromise;
+}
+
+async function getMockBaseSession(): Promise<BaseSession> {
+  await new Promise((resolve) => { setTimeout(resolve, 2000); });
+  const mockQuestion = 'nsmakmiler';
+  return {
+    question: mockQuestion,
+    answer: 'slammerkin',
+    attempts: [],
+    // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
+    attemptStatus: AttemptStatus.initial,
+  };
 }
 
 function getStatusLabel(status: AttemptStatus) {
