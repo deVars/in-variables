@@ -7,11 +7,14 @@
     "test": "echo 'test passed! (for now!)'",
     "build:dev": "./.project/build-once.sh",
     "build:prod": "./.project/build-prod.sh",
-    "build:watch": "./.project/build.sh"
+    "build:watch": "./.project/build.sh",
+    "wrangle:beta": "./project/build-prod.sh && pnpm exec wrangler pages deployment create --project-name devars --branch beta ./dist",
+    "wrangle:main": "./project/build-prod.sh && pnpm exec wrangler pages deployment create --project-name devars --branch main ./dist"
   },
   "author": "roseller velicaria, jr.",
   "license": "UNLICENSED",
   "devDependencies": {
+    "@cloudflare/workers-types": "~4",
     "@swc/cli": "~0.1",
     "@swc/core": "~1.3",
     "@types/d3": "~7.4.0",
@@ -27,6 +30,7 @@
     "jest": "~28",
     "lightningcss-cli": "~1.22",
     "typescript": "~5.1",
+    "wrangler": "~3",
     "yaml": "~2"
   }
 }
