@@ -1,5 +1,6 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import { type RouteEntry } from '../route.js';
+import getIcon from "./FriconixIcon";
 
 interface Footer {
   label: string;
@@ -7,7 +8,9 @@ interface Footer {
   routeMap: Record<string, RouteEntry>;
 }
 
-export default function getProjectFooter({ label, routeMap, subLabel }: Footer): m.ClosureComponent {
+export default function getProjectFooter({
+  label, routeMap, subLabel,
+}: Footer): m.ClosureComponent {
   return (_vnode: m.Vnode) => ({ view });
 
   function view({ children: _ }: m.Vnode) {
@@ -18,9 +21,21 @@ export default function getProjectFooter({ label, routeMap, subLabel }: Footer):
             m('.typo-s-h1.pad-b-0-5', label),
             m('.typo-s-h3.pad-b-0-5.pad-l-1-0', subLabel),
             m('.typo-s-h2.pad-b-0-5', 'Links'),
-            m('.typo-s-h3.pad-b-0-5.pad-l-1-0', 'in・Variables'),
-            m('.typo-s-h3.pad-b-0-5.pad-l-1-0', 'Contact Email'),
-            m('.typo-s-h3.pad-b-0-5.pad-l-1-0', `${routeMap.experimental001.path}`),
+            m('.typo-s-h3.pad-b-0-5.pad-l-1-0', [
+              m(m.route.Link, {
+                href: routeMap.about.path,
+                selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3',
+              }, [
+                m('span', 'in・Variables'),
+              ]),
+            ]),
+            m('.typo-s-h3.pad-b-0-5.pad-l-1-0', [
+              m('a.link.sur-fg-3',
+                { href: 'mailto:ross.is.hire.able036@passinbox.com' },
+                [
+                  m('span', 'Contact'),
+                ]),
+            ]),
           ]),
         ]),
       ]),
