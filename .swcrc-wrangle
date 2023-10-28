@@ -14,7 +14,7 @@
         "simplify": false,
         "globals": {
           "vars": {
-            "window.env": "\"dev\"",
+            "window.env": "\"prod\"",
           }
         }
       },

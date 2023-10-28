@@ -8,8 +8,8 @@
     "build:dev": "./.project/build-once.sh",
     "build:prod": "./.project/build-prod.sh",
     "build:watch": "./.project/build.sh",
-    "wrangle:beta": "./.project/build-prod.sh && pnpm exec wrangler pages deployment create --project-name devars --branch beta ./dist",
-    "wrangle:main": "./.project/build-prod.sh && pnpm exec wrangler pages deployment create --project-name devars --branch main ./dist"
+    "wrangle:beta": "./.project/build-wrangle.sh && pnpm exec wrangler pages deployment create --project-name devars --branch beta ./dist",
+    "wrangle:main": "./.project/build-wrangle.sh && pnpm exec wrangler pages deployment create --project-name devars --branch main ./dist"
   },
   "author": "roseller velicaria, jr.",
   "license": "UNLICENSED",
