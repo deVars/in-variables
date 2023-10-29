@@ -129,7 +129,7 @@ function checkAttempt(attempt: string[]) {
     }
     session.attemptLetters = session.answer.split('').map(() => '');
     maybeStartTile.focus();
-    session.attemptStatus = session.attempts.length < 6
+    session.attemptStatus = session.attempts.length < 5
       ? AttemptStatus.fail
       : AttemptStatus.over;
     updateSession(session);
@@ -255,7 +255,7 @@ async function getMockBaseSession(): Promise<BaseSession> {
 function getStatusLabel(status: AttemptStatus) {
   const labelMap: Record<AttemptStatus, string> = {
     [AttemptStatus.pendingLoad]: '',
-    [AttemptStatus.initial]: 'Try to solve the shuffled word within six tries.  Best of luck!',
+    [AttemptStatus.initial]: 'Try to solve the shuffled word within five tries.  Best of luck!',
     [AttemptStatus.loaded]: 'Welcome back!',
     [AttemptStatus.attempting]: '',
     [AttemptStatus.badAttempt]: 'Some tiles are empty.  Please fill them up.',
