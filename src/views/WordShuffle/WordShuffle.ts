@@ -6,6 +6,7 @@ interface BaseSession {
   answer: string;
   attempts: string[];
   attemptStatus: AttemptStatus;
+  definitions: string[];
 }
 
 interface Session extends BaseSession {
@@ -24,6 +25,7 @@ const emptySession: Session = {
   attemptLetters: [],
   attempts: [],
   attemptStatus: AttemptStatus.pendingLoad,
+  definitions: [],
 };
 
 interface QuestionTile {
@@ -88,6 +90,12 @@ export default function getWordShuffle(): m.ClosureComponent {
       m('.min-hgt-1-3.typo-s-ctr.mgn-t-0-5.mgn-b-0-5', [
         getStatusLabel(session.attemptStatus),
       ]),
+      session.attempts.length < 3 || session.definitions.length === 0
+        ? null
+        : m('.mgn-b-0-5.pad-l-2-0.pad-r-2-0.typo-s-ctr', [
+          m('.typo-s-h4', 'word hint:'),
+          session.definitions.map((definition) => m('p.typo-s-h6', definition)),
+        ]),
       session.attemptStatus === AttemptStatus.initial
         || session.attempts.length < 1
         ? null
@@ -180,11 +188,12 @@ function getNewQuestionTiles(question: string): QuestionTile[] {
 
 async function getSession(isMock: boolean) {
   const recentSession = await getRecentSession(isMock);
-  const { question, answer, attempts, attemptStatus } = recentSession;
+  const { question, answer, attempts, attemptStatus, definitions } = recentSession;
 
   const newSession: Session = {
     question,
     answer,
+    definitions,
     attempts,
     attemptStatus: attemptStatus !== AttemptStatus.success
     && attemptStatus !== AttemptStatus.over
@@ -232,7 +241,11 @@ async function getBaseSession(): Promise<BaseSession> {
     url: '/word-shuffle/word/get',
   });
   const [ question ] = words;
+
+  const definitions = await getDefinitions(question.word);
+
   return {
+    definitions,
     question: question.shuffled,
     answer: question.word,
     attempts: [],
@@ -243,13 +256,52 @@ async function getBaseSession(): Promise<BaseSession> {
 async function getMockBaseSession(): Promise<BaseSession> {
   await new Promise((resolve) => { setTimeout(resolve, 2000); });
   const mockQuestion = 'nsmakmiler';
+  const mockAnswer = 'slammerkin';
+
+  const definitions = await getDefinitions(mockAnswer);
+
   return {
+    definitions,
     question: mockQuestion,
-    answer: 'slammerkin',
-    attempts: [],
-    // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
+    answer: mockAnswer,
+    // attempts: [],
+    attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
     attemptStatus: AttemptStatus.initial,
   };
+}
+
+interface DefinitionResponse {
+  query: {
+    pages: DefinitionResponsePage[];
+  }
+}
+
+interface DefinitionResponsePage {
+  extract: string;
+}
+async function getDefinitions(answer: string): Promise<string[]> {
+  const genericParams = '?action=query&format=json&prop=extracts&formatversion=2&origin=*';
+  const titlesParam = `&titles=${answer}`;
+  const definitionUrl = `https://en.wiktionary.org/w/api.php${genericParams}${titlesParam}`;
+  const { query: { pages: [ { extract } ] } } = await m.request<DefinitionResponse>({
+    url: definitionUrl,
+  });
+
+  const parser = new DOMParser();
+  const htmlDocument = parser.parseFromString(extract, 'text/html');
+
+  const singularAnswer = answer.endsWith('s')
+    ? answer.substring(0, answer.length - 1)
+    : answer;
+
+  return Array.from(htmlDocument.body.children)
+    .filter(({ tagName }) => tagName.toLocaleLowerCase() === 'ol')
+    .flatMap(({ children }) => Array.from(children)
+      .filter(({ tagName, textContent }) => tagName.toLocaleLowerCase() === 'li'
+        && textContent !== null
+        && !textContent.includes(singularAnswer))
+      .map(({ textContent }) => textContent ?? '')
+      .filter(Boolean));
 }
 
 function getStatusLabel(status: AttemptStatus) {
@@ -267,8 +319,10 @@ function getStatusLabel(status: AttemptStatus) {
 }
 
 function updateSession(sessionToUpdate: Session) {
-  const { question, answer, attemptStatus, attempts } = sessionToUpdate;
-  const sessionState: BaseSession = { answer, attempts, attemptStatus, question };
+  const { question, answer, attemptStatus, attempts, definitions } = sessionToUpdate;
+  const sessionState: BaseSession = {
+    answer, attempts, attemptStatus, question, definitions,
+  };
   window.localStorage.setItem(storageKey, JSON.stringify(sessionState));
 }
 
