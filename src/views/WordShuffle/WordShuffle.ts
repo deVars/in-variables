@@ -92,9 +92,13 @@ export default function getWordShuffle(): m.ClosureComponent {
       ]),
       session.attempts.length < 3 || session.definitions.length === 0
         ? null
-        : m('.mgn-b-0-5.pad-l-2-0.pad-r-2-0.typo-s-ctr', [
-          m('.typo-s-h4', 'word hint:'),
-          session.definitions.map((definition) => m('p.typo-s-h6', definition)),
+        : m('.mgn-b-0-5', [
+          m('.mgn-cntr', {
+            style: `max-width: ${(session.answer.length * 2) + 2}rem`,
+          }, [
+            m('.typo-s-h4.typo-s-ctr', 'word hint:'),
+            session.definitions.map((definition) => m('p.typo-s-h6', definition)),
+          ]),
         ]),
       session.attemptStatus === AttemptStatus.initial
         || session.attempts.length < 1
