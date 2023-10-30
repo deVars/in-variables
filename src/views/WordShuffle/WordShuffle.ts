@@ -34,7 +34,7 @@ interface QuestionTile {
 }
 
 const storageKey = 'words-shuffle';
-const tileSel = '.wid-1-0.pad-0-5.box-w-1.box-rad-0-25.box-s-s';
+const tileSel = '.wid-1-0.pad-0-5.mgn-b-0-5.box-w-1.box-rad-0-25.box-s-s';
 const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr.sur-fg-1.sur-bg-4`;
 let session = emptySession;
 export default function getWordShuffle(): m.ClosureComponent {
@@ -97,7 +97,9 @@ export default function getWordShuffle(): m.ClosureComponent {
             style: `max-width: ${(session.answer.length * 2) + 2}rem`,
           }, [
             m('.typo-s-h4.typo-s-ctr', 'word hint:'),
-            session.definitions.map((definition) => m('p.typo-s-h6', definition)),
+            session.definitions.map(
+              (definition) => m('p.mgn-l-1-0.mgn-r-1-0.typo-s-h6', definition),
+            ),
           ]),
         ]),
       session.attemptStatus === AttemptStatus.initial
@@ -223,23 +225,21 @@ async function getRecentSession(isMock: boolean): Promise<BaseSession> {
     : await getBaseSession();
 
   const maybeStoredSession = window.localStorage.getItem(storageKey);
-  const storedSession = maybeStoredSession !== null
-    ? JSON.parse(maybeStoredSession)
-    : baseSession;
+  const hasNoStoredSession = maybeStoredSession === null;
+  const storedSession = hasNoStoredSession
+    ? baseSession
+    : JSON.parse(maybeStoredSession);
 
   const isStoredSessionExpired = baseSession.answer !== storedSession.answer;
+  const isNeedingFreshSession = hasNoStoredSession || isStoredSessionExpired;
 
-  baseSession.definitions = isStoredSessionExpired
-    ? await getDefinitions(baseSession.answer)
-    : [];
-
-  if (maybeStoredSession === null || isStoredSessionExpired) {
+  if (isNeedingFreshSession) {
+    baseSession.definitions = await getDefinitions(baseSession.answer);
     window.localStorage.setItem(storageKey, JSON.stringify(baseSession));
+    return baseSession;
   }
 
-  return isStoredSessionExpired
-    ? baseSession
-    : storedSession;
+  return storedSession;
 }
 
 interface QuestionSet{
@@ -263,8 +263,10 @@ async function getBaseSession(): Promise<BaseSession> {
 
 async function getMockBaseSession(): Promise<BaseSession> {
   await new Promise((resolve) => { setTimeout(resolve, 2000); });
-  const mockQuestion = 'nsmakmiler';
-  const mockAnswer = 'slammerkin';
+  // const mockQuestion = 'nsmakmiler';
+  // const mockAnswer = 'slammerkin';
+  const mockQuestion = 'anachroniscit';
+  const mockAnswer = 'anachronistic';
 
   return {
     definitions: [],
