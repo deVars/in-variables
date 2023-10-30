@@ -223,15 +223,21 @@ async function getRecentSession(isMock: boolean): Promise<BaseSession> {
     : await getBaseSession();
 
   const maybeStoredSession = window.localStorage.getItem(storageKey);
-
-  if (maybeStoredSession === null) {
-    window.localStorage.setItem(storageKey, JSON.stringify(baseSession));
-  }
-
   const storedSession = maybeStoredSession !== null
     ? JSON.parse(maybeStoredSession)
     : baseSession;
-  return baseSession.answer !== storedSession.answer
+
+  const isStoredSessionExpired = baseSession.answer !== storedSession.answer;
+
+  baseSession.definitions = isStoredSessionExpired
+    ? await getDefinitions(baseSession.answer)
+    : [];
+
+  if (maybeStoredSession === null || isStoredSessionExpired) {
+    window.localStorage.setItem(storageKey, JSON.stringify(baseSession));
+  }
+
+  return isStoredSessionExpired
     ? baseSession
     : storedSession;
 }
@@ -246,10 +252,8 @@ async function getBaseSession(): Promise<BaseSession> {
   });
   const [ question ] = words;
 
-  const definitions = await getDefinitions(question.word);
-
   return {
-    definitions,
+    definitions: [],
     question: question.shuffled,
     answer: question.word,
     attempts: [],
@@ -262,14 +266,12 @@ async function getMockBaseSession(): Promise<BaseSession> {
   const mockQuestion = 'nsmakmiler';
   const mockAnswer = 'slammerkin';
 
-  const definitions = await getDefinitions(mockAnswer);
-
   return {
-    definitions,
+    definitions: [],
     question: mockQuestion,
     answer: mockAnswer,
-    // attempts: [],
-    attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
+    attempts: [],
+    // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
     attemptStatus: AttemptStatus.initial,
   };
 }
