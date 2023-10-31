@@ -135,7 +135,7 @@ function checkAttempt(attempt: string[]) {
 
   const attemptWord = attempt.join('');
   session.attempts.push(attemptWord);
-  if (attemptWord !== session.answer) {
+  if (attemptWord.toLocaleLowerCase() !== session.answer.toLocaleLowerCase()) {
     const maybeStartTile = document.querySelector('input.try:first-of-type');
     if (!isHTMLInputElement(maybeStartTile)) {
       console.error('Unexpected error.  Cannot find word tiles.');
@@ -164,7 +164,10 @@ function getUpdatedQuestionTiles(tiles: QuestionTile[], attemptLetters: string[]
 
   attemptLetters.forEach((attemptLetter) => {
     const maybeIndex = newTiles.findIndex(
-      ({ letter, isUsedInAttempt }) => letter === attemptLetter && !isUsedInAttempt,
+      ({ letter, isUsedInAttempt }) => (
+        letter.toLocaleLowerCase() === attemptLetter.toLocaleLowerCase()
+        && !isUsedInAttempt
+      ),
     );
     if (maybeIndex === -1) {
       return;
@@ -265,8 +268,8 @@ async function getMockBaseSession(): Promise<BaseSession> {
   await new Promise((resolve) => { setTimeout(resolve, 2000); });
   // const mockQuestion = 'nsmakmiler';
   // const mockAnswer = 'slammerkin';
-  const mockQuestion = 'anachroniscit';
-  const mockAnswer = 'anachronistic';
+  const mockQuestion = 'huntre';
+  const mockAnswer = 'hunter';
 
   return {
     definitions: [],
