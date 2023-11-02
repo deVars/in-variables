@@ -6,6 +6,5 @@ BROWSERSLIST=">= 0.25%, firefox esr, chrome > 85" pnpm exec lightningcss --brows
 cp "${PWD}/index.html" ./dist/index.html
 cp "${PWD}/friconix.min.css" ./dist/friconix.min.css
 cp "${PWD}/favicon.ico" ./dist/favicon.ico
-cp -r "${PWD}/3p" ./dist/3p
 cp -r "${PWD}/assets" ./dist/assets
 cp -r "${PWD}/static" ./dist/static
