@@ -1,5 +1,13 @@
+.wid-4-0 {
+  width: 4rem;
+}
+
 .wid-1-0 {
   width: 1rem;
+}
+
+.wid-max-20-r {
+  max-width: 20rem;
 }
 
 .min-hgt-1-3 {

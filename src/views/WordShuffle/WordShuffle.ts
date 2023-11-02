@@ -3,10 +3,13 @@ import Loading from '../Loading.js';
 
 interface BaseSession {
   question: string;
+  questionSets: QuestionSet[];
   answer: string;
   attempts: string[];
   attemptStatus: AttemptStatus;
   definitions: string[];
+  questionRound: number;
+  isNextChallengeDeclined: boolean;
 }
 
 interface Session extends BaseSession {
@@ -16,16 +19,20 @@ interface Session extends BaseSession {
 
 enum AttemptStatus {
   pendingLoad, initial, loaded, attempting, badAttempt, success, fail, over,
+  successChallengeDeclined, successChallengeOver,
 }
 
 const emptySession: Session = {
   question: '',
+  questionRound: 0,
+  questionSets: [],
   answer: '',
   questionTiles: [],
   attemptLetters: [],
   attempts: [],
   attemptStatus: AttemptStatus.pendingLoad,
   definitions: [],
+  isNextChallengeDeclined: false,
 };
 
 interface QuestionTile {
@@ -36,15 +43,20 @@ interface QuestionTile {
 const storageKey = 'words-shuffle';
 const tileSel = '.wid-1-0.pad-0-5.mgn-b-0-5.box-w-1.box-rad-0-25.box-s-s';
 const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr.sur-fg-1.sur-bg-4`;
+const buttonSel = '.wid-4-0.dsp-b.sur-bg-100-h101.box-s-n.box-rad-0-25.pad-t-0-75.pad-b-0-75.pad-l-1-0.pad-r-1-0';
 let session = emptySession;
 export default function getWordShuffle(): m.ClosureComponent {
   const tileSwitcher = { handleEvent: updateTileFocus };
   const tileInputUpdater = { handleEvent: updateAttemptLetters };
+  let isNextChallengeDeclined = false;
 
   return () => ({
     view,
-    oninit: () => getSession(window.env === 'dev')
-      .then((newSession) => { session = newSession; }),
+    oninit: () => getSession(window.env === 'dev', 0)
+      .then((newSession) => {
+        session = newSession;
+        isNextChallengeDeclined = newSession.isNextChallengeDeclined;
+      }),
   });
 
   function view() {
@@ -53,7 +65,9 @@ export default function getWordShuffle(): m.ClosureComponent {
     }
 
     const isDisabled = session.attemptStatus === AttemptStatus.success
-      || session.attemptStatus === AttemptStatus.over;
+      || session.attemptStatus === AttemptStatus.over
+      || session.attemptStatus === AttemptStatus.successChallengeOver
+      || session.attemptStatus === AttemptStatus.successChallengeDeclined;
     const maybeDisabledClasses = isDisabled
       ? '.box-c-100'
       : '';
@@ -87,21 +101,50 @@ export default function getWordShuffle(): m.ClosureComponent {
               : 'next',
           })
         ))),
-      m('.min-hgt-1-3.typo-s-ctr.mgn-t-0-5.mgn-b-0-5', [
-        getStatusLabel(session.attemptStatus),
+      m('.min-hgt-1-3.typo-s-ctr.mgn-t-0-5', [
+        getStatusLabel(session.attemptStatus).map(
+          (label) => m('.mgn-l-1-0.mgn-r-1-0.mgn-b-0-5', label),
+        ),
       ]),
-      session.attempts.length < 3 || session.definitions.length === 0
+      session.attemptStatus !== AttemptStatus.success
+        || session.questionRound === 3
+        || isNextChallengeDeclined
         ? null
-        : m('.mgn-b-0-5', [
-          m('.mgn-cntr', {
-            style: `max-width: ${(session.answer.length * 2) + 2}rem`,
-          }, [
-            m('.typo-s-h4.typo-s-ctr', 'word hint:'),
-            session.definitions.map(
-              (definition) => m('p.mgn-l-1-0.mgn-r-1-0.typo-s-h6', definition),
-            ),
+        : m('.mgn-cntr.mgn-b-0-5.wid-max-20-r', [
+          m('.mgn-b-0-5.typo-s-h4.typo-s-ctr', 'Do you want to try the next challenge?'),
+          m('.dsp-flex.flx-s-a', [
+            m(`button.cur-ptr${buttonSel}`, {
+              type: 'button',
+              onclick: () => {
+                getSession(window.env === 'dev', session.questionRound + 1)
+                  .then((newSession) => { session = newSession; });
+                session = emptySession;
+              },
+            }, 'Yes'),
+            m(`button.cur-ptr${buttonSel}`, {
+              type: 'button',
+              onclick: () => {
+                isNextChallengeDeclined = true;
+                updateSession({
+                  ...session,
+                  attemptStatus: AttemptStatus.successChallengeDeclined,
+                  isNextChallengeDeclined,
+                });
+              },
+            }, 'No'),
           ]),
         ]),
+      session.attempts.length < 3 || session.definitions.length === 0
+        ? null
+        : m('.mgn-b-0-5.mgn-cntr', {
+          style: `max-width: max(${(session.answer.length * 2) + 2}rem, 80vw)`,
+        }, [
+          m('.typo-s-h4.typo-s-ctr', 'word hint:'),
+          session.definitions.map(
+            (definition) => m('p.mgn-l-1-0.mgn-r-1-0.typo-s-h6', definition),
+          ),
+        ]),
+
       session.attemptStatus === AttemptStatus.initial
         || session.attempts.length < 1
         ? null
@@ -151,7 +194,9 @@ function checkAttempt(attempt: string[]) {
     return true;
   }
 
-  session.attemptStatus = AttemptStatus.success;
+  session.attemptStatus = session.questionRound < 3
+    ? AttemptStatus.success
+    : AttemptStatus.successChallengeOver;
   window.localStorage.setItem(storageKey, JSON.stringify(session));
   m.redraw();
   return true;
@@ -195,18 +240,24 @@ function getNewQuestionTiles(question: string): QuestionTile[] {
     .map((letter) => ({ letter, isUsedInAttempt: false }));
 }
 
-async function getSession(isMock: boolean) {
-  const recentSession = await getRecentSession(isMock);
-  const { question, answer, attempts, attemptStatus, definitions } = recentSession;
+async function getSession(isMock: boolean, answerIndex: number) {
+  const recentSession = await getRecentSession(isMock, answerIndex);
+  const { question, answer, attempts, attemptStatus, definitions,
+    questionSets, questionRound, isNextChallengeDeclined } = recentSession;
 
   const newSession: Session = {
     question,
+    questionSets,
+    questionRound,
     answer,
     definitions,
     attempts,
+    isNextChallengeDeclined,
     attemptStatus: attemptStatus !== AttemptStatus.success
-    && attemptStatus !== AttemptStatus.over
-    && attempts.length > 0
+      && attemptStatus !== AttemptStatus.over
+      && attemptStatus !== AttemptStatus.successChallengeDeclined
+      && attemptStatus !== AttemptStatus.successChallengeOver
+      && attempts.length > 0
       ? AttemptStatus.loaded
       : attemptStatus,
     questionTiles: getNewQuestionTiles(question),
@@ -222,18 +273,21 @@ async function getSession(isMock: boolean) {
   return mockSessionPromise;
 }
 
-async function getRecentSession(isMock: boolean): Promise<BaseSession> {
+async function getRecentSession(isMock: boolean, answerIndex: number): Promise<BaseSession> {
   const baseSession = isMock
-    ? await getMockBaseSession()
-    : await getBaseSession();
+    ? await getMockBaseSession(answerIndex)
+    : await getBaseSession(answerIndex);
 
   const maybeStoredSession = window.localStorage.getItem(storageKey);
   const hasNoStoredSession = maybeStoredSession === null;
-  const storedSession = hasNoStoredSession
+  const storedSession: BaseSession = hasNoStoredSession
     ? baseSession
     : JSON.parse(maybeStoredSession);
 
-  const isStoredSessionExpired = baseSession.answer !== storedSession.answer;
+  const isStoredSessionExpired = !storedSession.questionSets
+    || Number.isNaN(storedSession.questionRound)
+    || baseSession.questionSets[0].word !== storedSession.questionSets[0].word
+    || answerIndex > storedSession.questionRound;
   const isNeedingFreshSession = hasNoStoredSession || isStoredSessionExpired;
 
   if (isNeedingFreshSession) {
@@ -249,7 +303,7 @@ interface QuestionSet{
   word: string;
   shuffled: string;
 }
-async function getBaseSession(): Promise<BaseSession> {
+async function getBaseSession(answerIndex: number): Promise<BaseSession> {
   const { words } = await m.request<{words: QuestionSet[]}>({
     url: '/word-shuffle/word/get',
   });
@@ -258,26 +312,33 @@ async function getBaseSession(): Promise<BaseSession> {
   return {
     definitions: [],
     question: question.shuffled,
+    questionSets: words,
     answer: question.word,
+    questionRound: answerIndex,
     attempts: [],
     attemptStatus: AttemptStatus.initial,
+    isNextChallengeDeclined: false,
   };
 }
 
-async function getMockBaseSession(): Promise<BaseSession> {
-  await new Promise((resolve) => { setTimeout(resolve, 2000); });
-  // const mockQuestion = 'nsmakmiler';
-  // const mockAnswer = 'slammerkin';
-  const mockQuestion = 'huntre';
-  const mockAnswer = 'hunter';
+async function getMockBaseSession(answerIndex: number): Promise<BaseSession> {
+  await new Promise((resolve) => { setTimeout(resolve, 600); });
+  const mockQuestionSet = [
+    { shuffled: 'huntre', word: 'hunter' },
+    { shuffled: 'oddge', word: 'dodge' },
+    { shuffled: 'anderp', word: 'pander' },
+    { shuffled: 'ueque', word: 'queue' },
+  ];
 
   return {
     definitions: [],
-    question: mockQuestion,
-    answer: mockAnswer,
+    question: mockQuestionSet[answerIndex].shuffled,
+    answer: mockQuestionSet[answerIndex].word,
+    questionSets: mockQuestionSet,
+    questionRound: answerIndex,
     attempts: [],
-    // attempts: [ 'nsmakmile1', 'nsmakmile2', 'nsmakmile3' ],
     attemptStatus: AttemptStatus.initial,
+    isNextChallengeDeclined: false,
   };
 }
 
@@ -312,27 +373,39 @@ async function getDefinitions(answer: string): Promise<string[]> {
         && textContent !== null
         && !textContent.includes(singularAnswer))
       .map(({ textContent }) => textContent ?? '')
-      .filter(Boolean));
+      .filter(Boolean))
+    .filter((_, index) => index < 3);
 }
 
 function getStatusLabel(status: AttemptStatus) {
-  const labelMap: Record<AttemptStatus, string> = {
-    [AttemptStatus.pendingLoad]: '',
-    [AttemptStatus.initial]: 'Try to solve the shuffled word within five tries.  Best of luck!',
-    [AttemptStatus.loaded]: 'Welcome back!',
-    [AttemptStatus.attempting]: '',
-    [AttemptStatus.badAttempt]: 'Some tiles are empty.  Please fill them up.',
-    [AttemptStatus.success]: 'Congratulations!',
-    [AttemptStatus.fail]: 'Sorry, try again.',
-    [AttemptStatus.over]: 'Used up all the attempts. Try again tomorrow.',
+  const labelMap: Record<AttemptStatus, string[]> = {
+    [AttemptStatus.pendingLoad]: [ '' ],
+    [AttemptStatus.initial]: [ 'Try to solve the shuffled word within five tries.  Best of luck!' ],
+    [AttemptStatus.loaded]: [ 'Welcome back!' ],
+    [AttemptStatus.attempting]: [ '' ],
+    [AttemptStatus.badAttempt]: [ 'Some tiles are empty.  Please fill them up.' ],
+    [AttemptStatus.success]: [ 'Congratulations!' ],
+    [AttemptStatus.fail]: [ 'Sorry, try again.' ],
+    [AttemptStatus.over]: [ 'Used up all the attempts.  Try again tomorrow.' ],
+    [AttemptStatus.successChallengeDeclined]: [
+      'Congratulations!',
+      'A new challenge is waiting tomorrow.',
+    ],
+    [AttemptStatus.successChallengeOver]: [
+      'Congratulations!',
+      'You have finished today\'s challenges!',
+      'A new challenge is waiting tomorrow.',
+    ],
   };
   return labelMap[status];
 }
 
 function updateSession(sessionToUpdate: Session) {
-  const { question, answer, attemptStatus, attempts, definitions } = sessionToUpdate;
+  const { question, answer, attemptStatus, attempts, definitions,
+    questionSets, questionRound, isNextChallengeDeclined } = sessionToUpdate;
   const sessionState: BaseSession = {
     answer, attempts, attemptStatus, question, definitions,
+    questionSets, questionRound, isNextChallengeDeclined,
   };
   window.localStorage.setItem(storageKey, JSON.stringify(sessionState));
 }

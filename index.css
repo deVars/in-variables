@@ -23,8 +23,10 @@
   --bg-color-3: oklch(93.5% 0.012 80);
   --bg-color-4: oklch(98.5% 0 0);
   --bg-color-5: oklch(98.5% 0 0);
-  --bg-color-100: oklch(38% 0 0);
-  --bg-color-101: oklch(40% 0 0);
+  --bg-color-100: oklch(70% 0.128 70);
+  --bg-color-101: oklch(75% 0.128 70);
+  /*--bg-color-100: oklch(38% 0 0);*/
+  /*--bg-color-101: oklch(40% 0 0);*/
 }
 
 [data-is-dark-theme='1'] {
@@ -50,6 +52,10 @@
 body {
   margin: 0;
   background-color: var(--bg-color-1);
+}
+
+.cur-ptr {
+  cursor: pointer;
 }
 
 .link {
@@ -223,6 +229,10 @@ body {
 
 .scl-suprt-img {
   width: 100%;
+}
+
+.flx-s-a {
+  justify-content: space-around;
 }
 
 .flx-s-b {
