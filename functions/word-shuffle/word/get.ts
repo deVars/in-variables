@@ -14,6 +14,7 @@ export async function onRequestGet(
   const wordListJson = await context.env.dv_pre_us.get('words');
   if (wordListJson === null) {
     return new Response(JSON.stringify({
+      id: day,
       words: [],
     }));
   }
@@ -23,7 +24,7 @@ export async function onRequestGet(
     const word = wordlist[(day * seed) % wordlist.length];
     return { word, shuffled: shuffle(word) };
   });
-  return new Response(JSON.stringify({ words }));
+  return new Response(JSON.stringify({ words, id: day }));
 }
 
 function shuffle(og: string): string {

@@ -2,6 +2,7 @@ import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import getLoading from '../Loading.js';
 
 interface BaseSession {
+  id: number;
   question: string;
   questionSets: QuestionSet[];
   answer: string;
@@ -23,6 +24,7 @@ enum AttemptStatus {
 }
 
 const emptySession: Session = {
+  id: 0,
   question: '',
   questionRound: 0,
   questionSets: [],
@@ -306,10 +308,11 @@ function getNewQuestionTiles(question: string): QuestionTile[] {
 
 async function getSession(isMock: boolean, answerIndex: number) {
   const recentSession = await getRecentSession(isMock, answerIndex);
-  const { question, answer, attempts, attemptStatus, definitions,
+  const { id, question, answer, attempts, attemptStatus, definitions,
     questionSets, questionRound, isNextChallengeDeclined } = recentSession;
 
   const newSession: Session = {
+    id,
     question,
     questionSets,
     questionRound,
@@ -328,52 +331,71 @@ async function getSession(isMock: boolean, answerIndex: number) {
     attemptLetters: answer.split('').map(() => ''),
   };
 
-  if (!isMock) {
-    return newSession;
-  }
-
-  const mockSessionPromise = Promise.resolve(newSession);
-  mockSessionPromise.then(() => { m.redraw(); });
-  return mockSessionPromise;
+  const newSessionWithRedrawChain = Promise.resolve(newSession);
+  newSessionWithRedrawChain.then(() => { m.redraw(); });
+  return newSessionWithRedrawChain;
 }
 
 async function getRecentSession(isMock: boolean, answerIndex: number): Promise<BaseSession> {
+  const maybeStoredSessionJSON = window.localStorage.getItem(storageKey);
+  const hasNoStoredSession = maybeStoredSessionJSON === null;
+  const maybeStoredSession = hasNoStoredSession
+    ? null
+    : JSON.parse(maybeStoredSessionJSON);
+
   const baseSession = isMock
-    ? await getMockBaseSession(answerIndex)
-    : await getBaseSession(answerIndex);
+    ? await getMockBaseSession(maybeStoredSession, answerIndex)
+    : await getBaseSession(maybeStoredSession, answerIndex);
 
-  const maybeStoredSession = window.localStorage.getItem(storageKey);
-  const hasNoStoredSession = maybeStoredSession === null;
-  const storedSession: BaseSession = hasNoStoredSession
-    ? baseSession
-    : JSON.parse(maybeStoredSession);
+  const hasNoInitialDefinition = (answerIndex === 0 && baseSession.definitions.length === 0);
+  const isNeedingNewDefinitions = hasNoInitialDefinition
+    || baseSession.questionRound < answerIndex;
 
-  const isStoredSessionExpired = !storedSession.questionSets
-    || Number.isNaN(storedSession.questionRound)
-    || baseSession.questionSets[0].word !== storedSession.questionSets[0].word
-    || answerIndex > storedSession.questionRound;
-  const isNeedingFreshSession = hasNoStoredSession || isStoredSessionExpired;
+  if (isNeedingNewDefinitions) {
+    const { shuffled: question, word: answer } = baseSession.questionSets[answerIndex];
+    const newSession = {
+      ...baseSession,
+      question,
+      answer,
+      definitions: await getDefinitions(answer),
+      questionRound: answerIndex,
+      attempts: [],
+      attemptStatus: AttemptStatus.initial,
+    };
 
-  if (isNeedingFreshSession) {
-    baseSession.definitions = await getDefinitions(baseSession.answer);
-    window.localStorage.setItem(storageKey, JSON.stringify(baseSession));
-    return baseSession;
+    window.localStorage.setItem(storageKey, JSON.stringify(newSession));
+    return newSession;
   }
 
-  return storedSession;
+  return baseSession;
 }
 
 interface QuestionSet{
   word: string;
   shuffled: string;
 }
-async function getBaseSession(answerIndex: number): Promise<BaseSession> {
-  const { words } = await m.request<{words: QuestionSet[]}>({
+
+const secondsPerDay = 86400;
+const millisPerSecond = 1000;
+async function getBaseSession(
+  maybeSession: BaseSession | null, answerIndex: number,
+): Promise<BaseSession> {
+  if (maybeSession !== null) {
+    const todaySessionId = Math.floor(Date.now() / secondsPerDay / millisPerSecond);
+    const isSessionNotExpired = maybeSession.id === todaySessionId;
+    if (isSessionNotExpired) {
+      return maybeSession;
+    }
+  }
+
+  const { id, words } = await m.request<{ id: number; words: QuestionSet[]; }>({
     url: '/word-shuffle/word/get',
+    background: true,
   });
   const [ question ] = words;
 
   return {
+    id,
     definitions: [],
     question: question.shuffled,
     questionSets: words,
@@ -385,7 +407,16 @@ async function getBaseSession(answerIndex: number): Promise<BaseSession> {
   };
 }
 
-async function getMockBaseSession(answerIndex: number): Promise<BaseSession> {
+async function getMockBaseSession(
+  maybeSession: BaseSession | null, answerIndex: number,
+): Promise<BaseSession> {
+  if (maybeSession !== null) {
+    if (answerIndex > 0
+      || (answerIndex === 0 && maybeSession.definitions.length > 0)) {
+      return maybeSession;
+    }
+  }
+
   await new Promise((resolve) => { setTimeout(resolve, 600); });
   const mockQuestionSet = [
     { shuffled: 'huntre', word: 'hunter' },
@@ -395,11 +426,12 @@ async function getMockBaseSession(answerIndex: number): Promise<BaseSession> {
   ];
 
   return {
+    id: Date.now(),
     definitions: [],
     question: mockQuestionSet[answerIndex].shuffled,
     answer: mockQuestionSet[answerIndex].word,
     questionSets: mockQuestionSet,
-    questionRound: answerIndex,
+    questionRound: 0,
     attempts: [],
     attemptStatus: AttemptStatus.initial,
     isNextChallengeDeclined: false,
@@ -421,6 +453,7 @@ async function getDefinitions(answer: string): Promise<string[]> {
   const definitionUrl = `https://en.wiktionary.org/w/api.php${genericParams}${titlesParam}`;
   const { query: { pages: [ { extract } ] } } = await m.request<DefinitionResponse>({
     url: definitionUrl,
+    background: true,
   });
 
   const parser = new DOMParser();
@@ -465,10 +498,10 @@ function getStatusLabel(status: AttemptStatus) {
 }
 
 function updateSession(sessionToUpdate: Session) {
-  const { question, answer, attemptStatus, attempts, definitions,
+  const { id, question, answer, attemptStatus, attempts, definitions,
     questionSets, questionRound, isNextChallengeDeclined } = sessionToUpdate;
   const sessionState: BaseSession = {
-    answer, attempts, attemptStatus, question, definitions,
+    id, answer, attempts, attemptStatus, question, definitions,
     questionSets, questionRound, isNextChallengeDeclined,
   };
   window.localStorage.setItem(storageKey, JSON.stringify(sessionState));
