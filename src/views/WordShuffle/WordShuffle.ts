@@ -128,10 +128,7 @@ function AttemptInputs(): m.Component<{session: Session;}> {
   return { view };
 
   function view({ attrs: { session: aSession } }: m.Vnode<{session: Session;}>) {
-    const isDisabled = aSession.attemptStatus === AttemptStatus.success
-      || aSession.attemptStatus === AttemptStatus.over
-      || aSession.attemptStatus === AttemptStatus.successChallengeOver
-      || aSession.attemptStatus === AttemptStatus.successChallengeDeclined;
+    const isDisabled = (session.attemptStatus & AttemptStatus.over) === AttemptStatus.over;
     const maybeDisabledClasses = isDisabled
       ? '.box-c-100'
       : '';
@@ -311,6 +308,8 @@ async function getSession(isMock: boolean, answerIndex: number) {
   const { id, question, answer, attempts, attemptStatus, definitions,
     questionSets, questionRound, isNextChallengeDeclined } = recentSession;
 
+  const isChallengeOver = (recentSession.attemptStatus & AttemptStatus.over) === AttemptStatus.over;
+  const isAttemptInProgress = !isChallengeOver && attempts.length > 0;
   const newSession: Session = {
     id,
     question,
@@ -320,11 +319,7 @@ async function getSession(isMock: boolean, answerIndex: number) {
     definitions,
     attempts,
     isNextChallengeDeclined,
-    attemptStatus: attemptStatus !== AttemptStatus.success
-      && attemptStatus !== AttemptStatus.over
-      && attemptStatus !== AttemptStatus.successChallengeDeclined
-      && attemptStatus !== AttemptStatus.successChallengeOver
-      && attempts.length > 0
+    attemptStatus: isAttemptInProgress
       ? AttemptStatus.loaded
       : attemptStatus,
     questionTiles: getNewQuestionTiles(question),
