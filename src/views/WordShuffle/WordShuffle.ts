@@ -1,5 +1,5 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
-import Loading from '../Loading.js';
+import getLoading from '../Loading.js';
 
 interface BaseSession {
   question: string;
@@ -18,7 +18,7 @@ interface Session extends BaseSession {
 }
 
 enum AttemptStatus {
-  pendingLoad, initial, loaded, attempting, badAttempt, success, fail, over,
+  pendingLoad, initial, loaded, attempting, badAttempt, fail, over = 8, success,
   successChallengeDeclined, successChallengeOver,
 }
 
@@ -40,14 +40,12 @@ interface QuestionTile {
   isUsedInAttempt: boolean;
 }
 
+const Loading = getLoading();
 const storageKey = 'words-shuffle';
 const tileSel = '.wid-1-0.pad-0-5.mgn-b-0-5.box-w-1.box-rad-0-25.box-s-s';
-const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr.sur-fg-1.sur-bg-4`;
 const buttonSel = '.wid-4-0.dsp-b.sur-bg-100-h101.box-s-n.box-rad-0-25.pad-t-0-75.pad-b-0-75.pad-l-1-0.pad-r-1-0';
 let session = emptySession;
 export default function getWordShuffle(): m.ClosureComponent {
-  const tileSwitcher = { handleEvent: updateTileFocus };
-  const tileInputUpdater = { handleEvent: updateAttemptLetters };
   let isNextChallengeDeclined = false;
 
   return () => ({
@@ -61,46 +59,14 @@ export default function getWordShuffle(): m.ClosureComponent {
 
   function view() {
     if (session.attemptStatus === AttemptStatus.pendingLoad) {
-      return m(Loading());
+      return m(Loading);
     }
 
-    const isDisabled = session.attemptStatus === AttemptStatus.success
-      || session.attemptStatus === AttemptStatus.over
-      || session.attemptStatus === AttemptStatus.successChallengeOver
-      || session.attemptStatus === AttemptStatus.successChallengeDeclined;
-    const maybeDisabledClasses = isDisabled
-      ? '.box-c-100'
-      : '';
+    const isChallengeOver = (session.attemptStatus & AttemptStatus.over) === AttemptStatus.over;
 
     return m('', [
-      m('.mgn-t-4-0.typo-s-ctr', session.questionTiles
-        .map((questionLetter, index) => {
-          const baseClass = `.dsp-i-b${questionAnswerTileSel}`;
-          const baseWithMargin = `${baseClass}${getMarginClass(index, session.answer.length)}`;
-          const questionTileClass = `${baseWithMargin}${getIsTileUsedClass(questionLetter)}`;
-          return m(questionTileClass, questionLetter.letter.toLocaleUpperCase());
-        })),
-      m('.mgn-t-4-0.mgn-b-2-0.typo-s-ctr', session.attemptLetters
-        .map((attemptLetter, index) => (
-          m(`input.try${questionAnswerTileSel}${maybeDisabledClasses}${getMarginClass(index, session.answer.length)}`, {
-            value: attemptLetter, // keep letter as what is typed to lessen confusion
-            type: 'text',
-            disabled: isDisabled,
-            placeholder: isDisabled
-              ? session.answer[index].toLocaleUpperCase()
-              : '',
-            maxlength: 1,
-            size: 1,
-            spellcheck: false,
-            'data-index': index,
-            autofocus: index === 0,
-            oninput: tileInputUpdater,
-            onkeyup: tileSwitcher,
-            enterkeyhint: index === session.questionTiles.length - 1
-              ? 'done'
-              : 'next',
-          })
-        ))),
+      m(QuestionTiles, { session }),
+      m(AttemptInputs, { session }),
       m('.min-hgt-1-3.typo-s-ctr.mgn-t-0-5', [
         getStatusLabel(session.attemptStatus).map(
           (label) => m('.mgn-l-1-0.mgn-r-1-0.mgn-b-0-5', label),
@@ -110,53 +76,151 @@ export default function getWordShuffle(): m.ClosureComponent {
         || session.questionRound === 3
         || isNextChallengeDeclined
         ? null
-        : m('.mgn-cntr.mgn-b-0-5.wid-max-20-r', [
-          m('.mgn-b-0-5.typo-s-h4.typo-s-ctr', 'Do you want to try the next challenge?'),
-          m('.dsp-flex.flx-s-a', [
-            m(`button.cur-ptr${buttonSel}`, {
-              type: 'button',
-              onclick: () => {
-                getSession(window.env === 'dev', session.questionRound + 1)
-                  .then((newSession) => { session = newSession; });
-                session = emptySession;
-              },
-            }, 'Yes'),
-            m(`button.cur-ptr${buttonSel}`, {
-              type: 'button',
-              onclick: () => {
-                isNextChallengeDeclined = true;
-                updateSession({
-                  ...session,
-                  attemptStatus: AttemptStatus.successChallengeDeclined,
-                  isNextChallengeDeclined,
-                });
-              },
-            }, 'No'),
-          ]),
-        ]),
-      session.attempts.length < 3 || session.definitions.length === 0
+        : m(NextChallengeDialog, {
+          onDeny: () => {
+            isNextChallengeDeclined = true;
+            updateSession({
+              ...session,
+              attemptStatus: AttemptStatus.successChallengeDeclined,
+              isNextChallengeDeclined,
+            });
+          },
+          onAccept: () => {
+            getSession(window.env === 'dev', session.questionRound + 1)
+              .then((newSession) => { session = newSession; });
+            session = emptySession;
+          },
+        }),
+      (session.attempts.length === 3 && isChallengeOver)
+        || session.attempts.length < 3
+        || session.definitions.length === 0
         ? null
-        : m('.mgn-b-0-5.mgn-cntr', {
-          style: `max-width: max(${(session.answer.length * 2) + 2}rem, 80vw)`,
-        }, [
-          m('.typo-s-h4.typo-s-ctr', 'word hint:'),
-          session.definitions.map(
-            (definition) => m('p.mgn-l-1-0.mgn-r-1-0.typo-s-h6', definition),
-          ),
-        ]),
+        : m(Definition, { session }),
 
       session.attemptStatus === AttemptStatus.initial
         || session.attempts.length < 1
         ? null
-        : m('.typo-s-ctr.mgn-b-2-0.sur-fg-1', [
-          m('.typo-s-h6.mgn-b-0-5.sur-fg-3', 'Previous attempts'),
-          m('.dsp-i-b.box-t-s-s.box-w-1.box-c-100.pad-t-0-25', Array.from(session.attempts)
-            .reverse()
-            .map((attempt) => m('.mgn-b-0-5', attempt.split('') // attempt letters
-              .map((attemptLetter, index) => (
-                m(`.dsp-i-b.box-c-100${tileSel}${getMarginClass(index, session.answer.length)}`, attemptLetter.toLocaleUpperCase())
-              ))))),
-        ]),
+        : m(PreviousAttempts, { session }),
+    ]);
+  }
+}
+
+const questionAnswerTileSel = `${tileSel}.box-c-3.typo-s-ctr.sur-fg-1.sur-bg-4`;
+function QuestionTiles(): m.Component<{session: Session}> {
+  return { view };
+
+  function view({ attrs: { session: aSession } }: m.Vnode<{session: Session}>) {
+    return m('.mgn-t-4-0.typo-s-ctr', aSession.questionTiles
+      .map((questionLetter, index) => {
+        const baseClass = `.dsp-i-b${questionAnswerTileSel}`;
+        const baseWithMargin = `${baseClass}${getMarginClass(index, aSession.answer.length)}`;
+        const questionTileClass = `${baseWithMargin}${getIsTileUsedClass(questionLetter)}`;
+        return m(questionTileClass, questionLetter.letter.toLocaleUpperCase());
+      }));
+  }
+}
+
+function AttemptInputs(): m.Component<{session: Session;}> {
+  const tileSwitcher = { handleEvent: updateTileFocus };
+  const tileInputUpdater = { handleEvent: updateAttemptLetters };
+  return { view };
+
+  function view({ attrs: { session: aSession } }: m.Vnode<{session: Session;}>) {
+    const isDisabled = aSession.attemptStatus === AttemptStatus.success
+      || aSession.attemptStatus === AttemptStatus.over
+      || aSession.attemptStatus === AttemptStatus.successChallengeOver
+      || aSession.attemptStatus === AttemptStatus.successChallengeDeclined;
+    const maybeDisabledClasses = isDisabled
+      ? '.box-c-100'
+      : '';
+    const baseInputAttr = {
+      type: 'text',
+      disabled: isDisabled,
+      maxlength: 1,
+      size: 1,
+      spellcheck: false,
+      oninput: tileInputUpdater,
+      onkeyup: tileSwitcher,
+    };
+
+    return m('.mgn-t-4-0.mgn-b-2-0.typo-s-ctr', aSession.attemptLetters
+      .map((attemptLetter, index) => {
+        const marginSel = getMarginClass(index, aSession.answer.length);
+        const inputSel = `input.try${questionAnswerTileSel}${maybeDisabledClasses}${marginSel}`;
+        return m(inputSel, {
+          ...baseInputAttr,
+          value: attemptLetter, // keep letter as what is typed to lessen confusion
+          'data-index': index,
+          autofocus: index === 0,
+          placeholder: isDisabled
+            ? aSession.answer[index].toLocaleUpperCase()
+            : '',
+          enterkeyhint: index === aSession.questionTiles.length - 1
+            ? 'done'
+            : 'next',
+        });
+      }));
+  }
+}
+
+interface NextChallengeDialogAttr {
+  onAccept(): void | Promise<void>;
+  onDeny(): void | Promise<void>;
+}
+function NextChallengeDialog(): m.Component<NextChallengeDialogAttr> {
+  return { view };
+
+  function view({ attrs: { onDeny, onAccept } }: m.Vnode<NextChallengeDialogAttr>) {
+    return m('.mgn-cntr.mgn-b-0-5.wid-max-20-r', [
+      m('.mgn-b-0-5.typo-s-h4.typo-s-ctr', 'Do you want to try the next challenge?'),
+      m('.dsp-flex.flx-s-a', [
+        m(`button.cur-ptr${buttonSel}`, {
+          type: 'button',
+          onclick: onAccept,
+        }, 'Yes'),
+        m(`button.cur-ptr${buttonSel}`, {
+          type: 'button',
+          onclick: onDeny,
+        }, 'No'),
+      ]),
+    ]);
+  }
+}
+
+function Definition(): m.Component<{session: BaseSession;}> {
+  return { view };
+
+  function view({ attrs: { session: aSession } }: m.Vnode<{session: BaseSession;}>) {
+    return m('.mgn-b-0-5.mgn-cntr', {
+      style: `max-width: max(${(aSession.answer.length * 2) + 2}rem, 80vw)`,
+    }, [
+      m('.typo-s-h4.typo-s-ctr', 'word hint:'),
+      aSession.definitions.map(
+        (definition) => m('p.mgn-l-1-0.mgn-r-1-0.typo-s-h6', definition),
+      ),
+    ]);
+  }
+}
+
+function PreviousAttempts(): m.Component<{session: BaseSession;}> {
+  return { view };
+
+  function view({ attrs: { session: aSession } }: m.Vnode<{session: BaseSession;}>) {
+    const label = 'Previous attempts';
+    const reversedAttempts = Array.from(aSession.attempts).reverse();
+    return m('.typo-s-ctr.mgn-b-2-0.sur-fg-1', [
+      m('.typo-s-h6.mgn-b-0-5.sur-fg-3', label),
+      m('.dsp-i-b.box-t-s-s.box-w-1.box-c-100.pad-t-0-25',
+        reversedAttempts.map(
+          (attempt) => m('.mgn-b-0-5', attempt.split('') // attempt letters
+            .map(
+              (attemptLetter, index) => {
+                const marginSel = getMarginClass(index, aSession.answer.length);
+                const previousTileSel = `.dsp-i-b.box-c-100${tileSel}${marginSel}`;
+                return m(previousTileSel, attemptLetter.toLocaleUpperCase());
+              },
+            )),
+        )),
     ]);
   }
 }
