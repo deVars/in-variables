@@ -1,81 +1,46 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import getLoading from '../Loading.js';
-
-interface BaseSession {
-  id: number;
-  question: string;
-  questionSets: QuestionSet[];
-  answer: string;
-  attempts: string[];
-  attemptStatus: AttemptStatus;
-  definitions: string[];
-  questionRound: number;
-  isNextChallengeDeclined: boolean;
-}
-
-interface Session extends BaseSession {
-  questionTiles: QuestionTile[];
-  attemptLetters: string[];
-}
-
-enum AttemptStatus {
-  pendingLoad, initial, loaded, attempting, badAttempt, fail, over = 8, success,
-  successChallengeDeclined, successChallengeOver,
-}
-
-const emptySession: Session = {
-  id: 0,
-  question: '',
-  questionRound: 0,
-  questionSets: [],
-  answer: '',
-  questionTiles: [],
-  attemptLetters: [],
-  attempts: [],
-  attemptStatus: AttemptStatus.pendingLoad,
-  definitions: [],
-  isNextChallengeDeclined: false,
-};
-
-interface QuestionTile {
-  letter: string;
-  isUsedInAttempt: boolean;
-}
+import { getStrictAttributeModel, type StrictAttributeModel } from '../../models/AttributeModel.js';
+import { AttemptStatus, emptySession, getNewQuestionTiles, getSession, updateSession, type BaseSession, type QuestionTile, type Session } from '../../models/WordShuffle.js';
 
 const Loading = getLoading();
-const storageKey = 'words-shuffle';
 const tileSel = '.wid-1-0.pad-0-5.mgn-b-0-5.box-w-1.box-rad-0-25.box-s-s';
 const buttonSel = '.wid-4-0.dsp-b.sur-bg-100-h101.box-s-n.box-rad-0-25.pad-t-0-75.pad-b-0-75.pad-l-1-0.pad-r-1-0';
-let session = emptySession;
+
 export default function getWordShuffle(): m.ClosureComponent {
+  const sessionModel = getStrictAttributeModel<Session>(emptySession);
+  const AttemptInputs = getAttemptInputs(sessionModel);
   let isNextChallengeDeclined = false;
 
   return () => ({
     view,
     oninit: () => getSession(window.env === 'dev', 0)
       .then((newSession) => {
-        session = newSession;
+        sessionModel.set(newSession);
         isNextChallengeDeclined = newSession.isNextChallengeDeclined;
       }),
   });
 
   function view() {
-    if (session.attemptStatus === AttemptStatus.pendingLoad) {
+    const { attempts, attemptStatus, definitions, questionRound } = sessionModel.value;
+    const { value: session } = sessionModel;
+
+    if (sessionModel.value.attemptStatus === AttemptStatus.pendingLoad) {
       return m(Loading);
     }
 
-    const isChallengeOver = (session.attemptStatus & AttemptStatus.over) === AttemptStatus.over;
+    const isChallengeOver = (attemptStatus & AttemptStatus.over) === AttemptStatus.over;
 
     return m('', [
       m(QuestionTiles, { session }),
-      m(AttemptInputs, { session }),
+      m(AttemptInputs),
       m('.min-hgt-1-3.typo-s-ctr.mgn-t-0-5', [
-        getStatusLabel(session.attemptStatus).map(
+        getStatusLabel(attemptStatus).map(
           (label) => m('.mgn-l-1-0.mgn-r-1-0.mgn-b-0-5', label),
         ),
       ]),
-      session.attemptStatus !== AttemptStatus.success
-        || session.questionRound === 3
+      attemptStatus !== AttemptStatus.success
+        || questionRound === 3
         || isNextChallengeDeclined
         ? null
         : m(NextChallengeDialog, {
@@ -88,19 +53,19 @@ export default function getWordShuffle(): m.ClosureComponent {
             });
           },
           onAccept: () => {
-            getSession(window.env === 'dev', session.questionRound + 1)
-              .then((newSession) => { session = newSession; });
-            session = emptySession;
+            getSession(window.env === 'dev', questionRound + 1)
+              .then((newSession) => { sessionModel.set(newSession); });
+            sessionModel.set(emptySession);
           },
         }),
-      (session.attempts.length === 3 && isChallengeOver)
-        || session.attempts.length < 3
-        || session.definitions.length === 0
+      (attempts.length === 3 && isChallengeOver)
+        || attempts.length < 3
+        || definitions.length === 0
         ? null
         : m(Definition, { session }),
 
-      session.attemptStatus === AttemptStatus.initial
-        || session.attempts.length < 1
+      attemptStatus === AttemptStatus.initial
+        || attempts.length < 1
         ? null
         : m(PreviousAttempts, { session }),
     ]);
@@ -122,13 +87,21 @@ function QuestionTiles(): m.Component<{session: Session}> {
   }
 }
 
-function AttemptInputs(): m.Component<{session: Session;}> {
-  const tileSwitcher = { handleEvent: updateTileFocus };
-  const tileInputUpdater = { handleEvent: updateAttemptLetters };
-  return { view };
+function getAttemptInputs(sessionModel: StrictAttributeModel<Session>): m.ClosureComponent {
+  const tileSwitcher = {
+    handleEvent: (event: KeyboardEvent) => updateTileFocus(sessionModel, event),
+  };
+  const tileInputUpdater = {
+    handleEvent: (event: InputEvent & { redraw: boolean; }) => {
+      updateAttemptLetters(sessionModel, event);
+    },
+  };
 
-  function view({ attrs: { session: aSession } }: m.Vnode<{session: Session;}>) {
-    const isDisabled = (session.attemptStatus & AttemptStatus.over) === AttemptStatus.over;
+  return () => ({ view });
+
+  function view() {
+    const { answer, attemptLetters, attemptStatus, questionTiles } = sessionModel.value;
+    const isDisabled = (attemptStatus & AttemptStatus.over) === AttemptStatus.over;
     const maybeDisabledClasses = isDisabled
       ? '.box-c-100'
       : '';
@@ -142,9 +115,9 @@ function AttemptInputs(): m.Component<{session: Session;}> {
       onkeyup: tileSwitcher,
     };
 
-    return m('.mgn-t-4-0.mgn-b-2-0.typo-s-ctr', aSession.attemptLetters
+    return m('.mgn-t-4-0.mgn-b-2-0.typo-s-ctr', attemptLetters
       .map((attemptLetter, index) => {
-        const marginSel = getMarginClass(index, aSession.answer.length);
+        const marginSel = getMarginClass(index, answer.length);
         const inputSel = `input.try${questionAnswerTileSel}${maybeDisabledClasses}${marginSel}`;
         return m(inputSel, {
           ...baseInputAttr,
@@ -152,9 +125,9 @@ function AttemptInputs(): m.Component<{session: Session;}> {
           'data-index': index,
           autofocus: index === 0,
           placeholder: isDisabled
-            ? aSession.answer[index].toLocaleUpperCase()
+            ? answer[index].toLocaleUpperCase()
             : '',
-          enterkeyhint: index === aSession.questionTiles.length - 1
+          enterkeyhint: index === questionTiles.length - 1
             ? 'done'
             : 'next',
         });
@@ -224,47 +197,6 @@ function PreviousAttempts(): m.Component<{session: BaseSession;}> {
   }
 }
 
-function checkAttempt(attempt: string[]) {
-  if (attempt.some((letter) => letter === '')) {
-    session.attemptStatus = AttemptStatus.badAttempt;
-    const emptyIndex = attempt.findIndex((letter) => letter === '');
-    const nthTileSelector = `input.try:nth-of-type(${emptyIndex + 1})`;
-    const maybeEmptyTile = document.querySelector(nthTileSelector);
-    if (!isHTMLInputElement(maybeEmptyTile)) {
-      console.error('Unexpected error.  Cannot find word tiles.');
-      return false;
-    }
-    maybeEmptyTile.focus();
-    m.redraw();
-    return false;
-  }
-
-  const attemptWord = attempt.join('');
-  session.attempts.push(attemptWord);
-  if (attemptWord.toLocaleLowerCase() !== session.answer.toLocaleLowerCase()) {
-    const maybeStartTile = document.querySelector('input.try:first-of-type');
-    if (!isHTMLInputElement(maybeStartTile)) {
-      console.error('Unexpected error.  Cannot find word tiles.');
-      return false;
-    }
-    session.attemptLetters = session.answer.split('').map(() => '');
-    maybeStartTile.focus();
-    session.attemptStatus = session.attempts.length < 5
-      ? AttemptStatus.fail
-      : AttemptStatus.over;
-    updateSession(session);
-    m.redraw();
-    return true;
-  }
-
-  session.attemptStatus = session.questionRound < 3
-    ? AttemptStatus.success
-    : AttemptStatus.successChallengeOver;
-  window.localStorage.setItem(storageKey, JSON.stringify(session));
-  m.redraw();
-  return true;
-}
-
 function getUpdatedQuestionTiles(tiles: QuestionTile[], attemptLetters: string[]) {
   const newTiles = tiles.map<QuestionTile>(
     ({ letter }) => ({ letter, isUsedInAttempt: false }),
@@ -298,177 +230,6 @@ function getMarginClass(index: number, answerLength: number) {
     : '';
 }
 
-function getNewQuestionTiles(question: string): QuestionTile[] {
-  return question.split('')
-    .map((letter) => ({ letter, isUsedInAttempt: false }));
-}
-
-async function getSession(isMock: boolean, answerIndex: number) {
-  const recentSession = await getRecentSession(isMock, answerIndex);
-  const { id, question, answer, attempts, attemptStatus, definitions,
-    questionSets, questionRound, isNextChallengeDeclined } = recentSession;
-
-  const isChallengeOver = (recentSession.attemptStatus & AttemptStatus.over) === AttemptStatus.over;
-  const isAttemptInProgress = !isChallengeOver && attempts.length > 0;
-  const newSession: Session = {
-    id,
-    question,
-    questionSets,
-    questionRound,
-    answer,
-    definitions,
-    attempts,
-    isNextChallengeDeclined,
-    attemptStatus: isAttemptInProgress
-      ? AttemptStatus.loaded
-      : attemptStatus,
-    questionTiles: getNewQuestionTiles(question),
-    attemptLetters: answer.split('').map(() => ''),
-  };
-
-  const newSessionWithRedrawChain = Promise.resolve(newSession);
-  newSessionWithRedrawChain.then(() => { m.redraw(); });
-  return newSessionWithRedrawChain;
-}
-
-async function getRecentSession(isMock: boolean, answerIndex: number): Promise<BaseSession> {
-  const maybeStoredSessionJSON = window.localStorage.getItem(storageKey);
-  const hasNoStoredSession = maybeStoredSessionJSON === null;
-  const maybeStoredSession = hasNoStoredSession
-    ? null
-    : JSON.parse(maybeStoredSessionJSON);
-
-  const baseSession = isMock
-    ? await getMockBaseSession(maybeStoredSession, answerIndex)
-    : await getBaseSession(maybeStoredSession, answerIndex);
-
-  const hasNoInitialDefinition = (answerIndex === 0 && baseSession.definitions.length === 0);
-  const isNeedingNewDefinitions = hasNoInitialDefinition
-    || baseSession.questionRound < answerIndex;
-
-  if (isNeedingNewDefinitions) {
-    const { shuffled: question, word: answer } = baseSession.questionSets[answerIndex];
-    const newSession = {
-      ...baseSession,
-      question,
-      answer,
-      definitions: await getDefinitions(answer),
-      questionRound: answerIndex,
-      attempts: [],
-      attemptStatus: AttemptStatus.initial,
-    };
-
-    window.localStorage.setItem(storageKey, JSON.stringify(newSession));
-    return newSession;
-  }
-
-  return baseSession;
-}
-
-interface QuestionSet{
-  word: string;
-  shuffled: string;
-}
-
-const secondsPerDay = 86400;
-const millisPerSecond = 1000;
-async function getBaseSession(
-  maybeSession: BaseSession | null, answerIndex: number,
-): Promise<BaseSession> {
-  if (maybeSession !== null) {
-    const todaySessionId = Math.floor(Date.now() / secondsPerDay / millisPerSecond);
-    const isSessionNotExpired = maybeSession.id === todaySessionId;
-    if (isSessionNotExpired) {
-      return maybeSession;
-    }
-  }
-
-  const { id, words } = await m.request<{ id: number; words: QuestionSet[]; }>({
-    url: '/word-shuffle/word/get',
-    background: true,
-  });
-  const [ question ] = words;
-
-  return {
-    id,
-    definitions: [],
-    question: question.shuffled,
-    questionSets: words,
-    answer: question.word,
-    questionRound: answerIndex,
-    attempts: [],
-    attemptStatus: AttemptStatus.initial,
-    isNextChallengeDeclined: false,
-  };
-}
-
-async function getMockBaseSession(
-  maybeSession: BaseSession | null, answerIndex: number,
-): Promise<BaseSession> {
-  if (maybeSession !== null) {
-    if (answerIndex > 0
-      || (answerIndex === 0 && maybeSession.definitions.length > 0)) {
-      return maybeSession;
-    }
-  }
-
-  await new Promise((resolve) => { setTimeout(resolve, 600); });
-  const mockQuestionSet = [
-    { shuffled: 'huntre', word: 'hunter' },
-    { shuffled: 'oddge', word: 'dodge' },
-    { shuffled: 'anderp', word: 'pander' },
-    { shuffled: 'ueque', word: 'queue' },
-  ];
-
-  return {
-    id: Date.now(),
-    definitions: [],
-    question: mockQuestionSet[answerIndex].shuffled,
-    answer: mockQuestionSet[answerIndex].word,
-    questionSets: mockQuestionSet,
-    questionRound: 0,
-    attempts: [],
-    attemptStatus: AttemptStatus.initial,
-    isNextChallengeDeclined: false,
-  };
-}
-
-interface DefinitionResponse {
-  query: {
-    pages: DefinitionResponsePage[];
-  }
-}
-
-interface DefinitionResponsePage {
-  extract: string;
-}
-async function getDefinitions(answer: string): Promise<string[]> {
-  const genericParams = '?action=query&format=json&prop=extracts&formatversion=2&origin=*';
-  const titlesParam = `&titles=${answer}`;
-  const definitionUrl = `https://en.wiktionary.org/w/api.php${genericParams}${titlesParam}`;
-  const { query: { pages: [ { extract } ] } } = await m.request<DefinitionResponse>({
-    url: definitionUrl,
-    background: true,
-  });
-
-  const parser = new DOMParser();
-  const htmlDocument = parser.parseFromString(extract, 'text/html');
-
-  const singularAnswer = answer.endsWith('s')
-    ? answer.substring(0, answer.length - 1)
-    : answer;
-
-  return Array.from(htmlDocument.body.children)
-    .filter(({ tagName }) => tagName.toLocaleLowerCase() === 'ol')
-    .flatMap(({ children }) => Array.from(children)
-      .filter(({ tagName, textContent }) => tagName.toLocaleLowerCase() === 'li'
-        && textContent !== null
-        && !textContent.includes(singularAnswer))
-      .map(({ textContent }) => textContent ?? '')
-      .filter(Boolean))
-    .filter((_, index) => index < 3);
-}
-
 function getStatusLabel(status: AttemptStatus) {
   const labelMap: Record<AttemptStatus, string[]> = {
     [AttemptStatus.pendingLoad]: [ '' ],
@@ -492,50 +253,52 @@ function getStatusLabel(status: AttemptStatus) {
   return labelMap[status];
 }
 
-function updateSession(sessionToUpdate: Session) {
-  const { id, question, answer, attemptStatus, attempts, definitions,
-    questionSets, questionRound, isNextChallengeDeclined } = sessionToUpdate;
-  const sessionState: BaseSession = {
-    id, answer, attempts, attemptStatus, question, definitions,
-    questionSets, questionRound, isNextChallengeDeclined,
-  };
-  window.localStorage.setItem(storageKey, JSON.stringify(sessionState));
-}
-
-function updateTileFocus(event: KeyboardEvent & { redraw: boolean; }) {
+function updateTileFocus(
+  sessionModel: StrictAttributeModel<Session>,
+  event: KeyboardEvent,
+) {
   const { currentTarget, key } = event;
 
   if (!isHTMLInputElement(currentTarget)) {
     return;
   }
 
-  session.questionTiles = getUpdatedQuestionTiles(
-    session.questionTiles, session.attemptLetters,
-  );
+  const { attemptLetters, attemptStatus, question, questionTiles } = sessionModel.value;
+  const newSession = { ...sessionModel.value };
 
-  const isDisabledOrAttempting = session.attemptStatus === AttemptStatus.success
-    || session.attemptStatus === AttemptStatus.over;
-  if (!session.attemptLetters.every((letter) => letter === '')
-    && !isDisabledOrAttempting) {
-    session.attemptStatus = AttemptStatus.attempting;
+  newSession.questionTiles = getUpdatedQuestionTiles(questionTiles, attemptLetters);
+
+  const isDisabled = (attemptStatus & AttemptStatus.over) === AttemptStatus.over;
+  if (!attemptLetters.every((letter) => letter === '')
+    && !isDisabled) {
+    newSession.attemptStatus = AttemptStatus.attempting;
   }
 
   if (key === 'Enter') {
     if (currentTarget.value === '') {
+      sessionModel.set(newSession);
       return;
     }
 
-    if (session.attemptLetters.every((letter) => letter !== '')) {
-      if (checkAttempt(session.attemptLetters)) {
-        session.questionTiles = getNewQuestionTiles(session.question);
+    if (attemptLetters.every((letter) => letter !== '')) {
+      const { attemptLetters: checkedAttemptLetters,
+        attempts,
+        attemptStatus: checkedAttemptStatus } = checkAttempt(newSession, attemptLetters);
+      newSession.attemptLetters = checkedAttemptLetters;
+      newSession.attempts = attempts;
+      newSession.attemptStatus = checkedAttemptStatus;
+
+      if (checkedAttemptStatus !== AttemptStatus.badAttempt) {
+        newSession.questionTiles = getNewQuestionTiles(question);
+        updateSession(newSession);
       }
     }
 
     if (isHTMLElement(currentTarget.nextElementSibling)) {
       currentTarget.nextElementSibling.focus();
-      return;
     }
 
+    sessionModel.set(newSession);
     return;
   }
 
@@ -549,13 +312,82 @@ function updateTileFocus(event: KeyboardEvent & { redraw: boolean; }) {
     if (isHTMLElement(currentTarget.previousElementSibling)) {
       currentTarget.previousElementSibling.focus();
     }
-    // return;
   }
-  // console.log('key', key, currentTarget.getAttribute('data-index'), currentTarget.value);
+
+  sessionModel.set(newSession);
 }
 
-function updateAttemptLetters(e: InputEvent & { redraw: boolean; }) {
+function checkAttempt(
+  session: Session, attempt: string[],
+) {
+  if (attempt.some((letter) => letter === '')) {
+    return !tryRefocusOnEmptyTile(attempt)
+      ? session
+      : { ...session, attemptStatus: AttemptStatus.badAttempt };
+  }
+
+  const { answer, attempts, questionRound } = session;
+  const attemptWord = attempt.join('');
+  attempts.push(attemptWord);
+
+  const isAttemptTheAnswer = attemptWord.toLocaleLowerCase() === answer.toLocaleLowerCase();
+  if (!isAttemptTheAnswer && !tryRefocusOnStartTile()) {
+    return session;
+  }
+
+  return {
+    ...session,
+    attemptLetters: isAttemptTheAnswer
+      ? attempt
+      : answer.split('').map(() => ''),
+    attempts,
+    attemptStatus: getCheckedAttemptStatus(isAttemptTheAnswer, attempts.length, questionRound),
+  };
+}
+
+function tryRefocusOnEmptyTile(attempt: string[]) {
+  const emptyIndex = attempt.findIndex((letter) => letter === '');
+  const nthTileSelector = `input.try:nth-of-type(${emptyIndex + 1})`;
+  const maybeEmptyTile = document.querySelector(nthTileSelector);
+  if (!isHTMLInputElement(maybeEmptyTile)) {
+    console.error('Unexpected error.  Cannot find word tiles.');
+    return false;
+  }
+  maybeEmptyTile.focus();
+  return true;
+}
+
+function tryRefocusOnStartTile() {
+  const maybeStartTile = document.querySelector('input.try:first-of-type');
+  if (!isHTMLInputElement(maybeStartTile)) {
+    console.error('Unexpected error.  Cannot find word tiles.');
+    return false;
+  }
+  maybeStartTile.focus();
+  return true;
+}
+
+const attemptsLimit = 5;
+const challengeLimit = 3;
+function getCheckedAttemptStatus(
+  isAttemptCorrect: boolean, attemptsCount: number, challengeCount: number,
+) {
+  if (isAttemptCorrect) {
+    return challengeCount < challengeLimit
+      ? AttemptStatus.success
+      : AttemptStatus.successChallengeOver;
+  }
+  return attemptsCount < attemptsLimit
+    ? AttemptStatus.fail
+    : AttemptStatus.over;
+}
+
+function updateAttemptLetters(
+  sessionModel: StrictAttributeModel<Session>,
+  e: InputEvent & { redraw: boolean; },
+) {
   const { currentTarget, data } = e;
+
   e.redraw = false;
 
   if (!isHTMLInputElement(currentTarget)) {
@@ -569,11 +401,12 @@ function updateAttemptLetters(e: InputEvent & { redraw: boolean; }) {
     return;
   }
 
-  if (data === '' || data === null) {
-    session.attemptLetters[dataIndex] = '';
-    return;
-  }
-  session.attemptLetters[dataIndex] = currentTarget.value;
+  const session = sessionModel.value;
+  const { attemptLetters } = session;
+  attemptLetters[dataIndex] = data === '' || data === null
+    ? ''
+    : currentTarget.value;
+  sessionModel.set({ ...session, attemptLetters });
 }
 
 function isHTMLElement(target: EventTarget | null): target is HTMLElement {
