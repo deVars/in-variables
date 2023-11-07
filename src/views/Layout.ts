@@ -15,7 +15,7 @@ export default function getLayout({ routeMap, isDarkTheme }: Layout): m.ClosureC
   return (_vnode: m.Vnode) => ({ view });
 
   function view({ children }: m.Vnode) {
-    const tabSelectorBase = '.link.dsp-i-b.pad-0-5.mgn-0.mgn-l-0-25.mgn-r-0-25.box-w-2.box-b-s-s.box-c-t';
+    const tabSelectorBase = '.link.sur-fg-3-2.dsp-i-b.pad-0-5.mgn-0.mgn-l-0-25.mgn-r-0-25.box-w-2.box-b-s-s.box-c-t';
     const themeIconName = isDarkTheme.value ? 'bulb-solid' : 'bulb-hollow';
     return m('.sur-bg-1.sur-fg-1.typo-std', [
       m('.pad-t-0-5.sur-bg-4', [
@@ -24,14 +24,14 @@ export default function getLayout({ routeMap, isDarkTheme }: Layout): m.ClosureC
             m('section.typo-s-h1', 'in・Variables'),
             m('section.mgn-0.mgn-l-4-0.mgn-r-2-0.box-w-1.box-l-s-s.box-c-100', [
               m('.mgn-l-2-0.dsp-flex', [
-                m('.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3.mgn-r-2-0',
+                m('.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3-2.mgn-r-2-0',
                   { onclick: () => isDarkTheme.set(toggleDarkLightTheme(isDarkTheme.value)) },
                   [
                     m('i.fi-cnluxm-bulb-solid.typo-s-h1.dsp-flex', [
                       m(Icon, { iconName: themeIconName, optionsMask: 'cnluxm' }),
                     ]),
                   ]),
-                m('a.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3',
+                m('a.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3-2',
                   { href: 'mailto:ross.is.hire.able036@passinbox.com' },
                   [
                     m('i.fi-xnlxxm-close-envelope.typo-s-h1.dsp-flex', [

@@ -22,7 +22,7 @@ function view({ attrs: { homePath } }: m.Vnode<WithHomePath>) {
       m('span', 'The page requested cannot be found.  Double check if there is a typo or you can '),
       m(m.route.Link, {
         href: homePath,
-        selector: 'span.link.sur-fg-3',
+        selector: 'span.link.sur-fg-3-2',
       }, 'return home'),
       m('span', '.'),
     ]),

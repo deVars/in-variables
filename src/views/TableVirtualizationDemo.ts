@@ -30,7 +30,7 @@ export default function getTableVirtualizationDemo({
     return m('.mgn-t-0-5.mgn-l-2-0.mgn-r-2-0.mgn-b-3-0.pad-t-0-5.sur-bg-2', [
       m(m.route.Link, {
         href: returnPath,
-        selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3.pad-l-1-0',
+        selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3-2.pad-l-1-0',
       }, [
         m('i.fi-xnslxl-arrow-simple.dsp-flex', [
           m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),

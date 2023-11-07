@@ -24,13 +24,13 @@ export default function getProjectFooter({
             m('.typo-s-h3.pad-b-0-5.pad-l-1-0', [
               m(m.route.Link, {
                 href: routeMap.about.path,
-                selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3',
+                selector: 'a.dsp-flex.flx-a-c.link.sur-fg-2-3',
               }, [
                 m('span', 'in・Variables'),
               ]),
             ]),
             m('.typo-s-h3.pad-b-0-5.pad-l-1-0', [
-              m('a.link.sur-fg-3',
+              m('a.link.sur-fg-2-3',
                 { href: 'mailto:ross.is.hire.able036@passinbox.com' },
                 [
                   m('span', 'Contact'),

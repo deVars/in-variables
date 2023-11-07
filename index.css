@@ -22,7 +22,7 @@
   --bg-color-2: oklch(95.5% 0.010 85);
   --bg-color-3: oklch(93.5% 0.012 80);
   --bg-color-4: oklch(98.5% 0 0);
-  --bg-color-5: oklch(98.5% 0 0);
+  --bg-color-5: oklch(90% 0.015 85);
   --bg-color-100: oklch(70% 0.128 70);
   --bg-color-101: oklch(75% 0.128 70);
   /*--bg-color-100: oklch(38% 0 0);*/
@@ -54,17 +54,9 @@ body {
   background-color: var(--bg-color-1);
 }
 
-.cur-ptr {
-  cursor: pointer;
-}
-
 .link {
   cursor: pointer;
   text-decoration: none;
-}
-
-.link:hover {
-  color: var(--fg-color-2);
 }
 
 .link-card {
@@ -168,8 +160,24 @@ body {
   color: var(--fg-color-2);
 }
 
+.sur-fg-2-3 {
+  color: var(--fg-color-2);
+}
+
+.sur-fg-2-3:hover {
+  color: var(--fg-color-3);
+}
+
 .sur-fg-3 {
   color: var(--fg-color-3);
+}
+
+.sur-fg-3-2 {
+  color: var(--fg-color-3);
+}
+
+.sur-fg-3-2:hover {
+  color: var(--fg-color-2);
 }
 
 .sur-fg-10 {

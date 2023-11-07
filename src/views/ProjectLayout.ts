@@ -28,14 +28,14 @@ export default function getProjectLayout({
             m('section.typo-s-h1', label),
             m('section.mgn-0.mgn-l-4-0.mgn-r-2-0.box-w-1.box-l-s-s.box-c-100', [
               m('.mgn-l-2-0.typo-s-h1.dsp-flex.flx-a-c.hgt-flow', [
-                m('.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3.mgn-r-2-0',
+                m('.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3-2.mgn-r-2-0',
                   { onclick: () => isDarkTheme.set(toggleDarkLightTheme(isDarkTheme.value)) },
                   [
                     m('i.fi-cnluxm-bulb-solid.typo-s-h1.dsp-flex', [
                       m(Icon, { iconName: themeIconName, optionsMask: 'cnluxm' }),
                     ]),
                   ]),
-                m('.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3.mgn-r-0-5',
+                m('.link.typo-mono.typo-s-h5.typo-s-bold.sur-fg-3-2.mgn-r-0-5',
                   { onclick: () => console.warn('hamburger is clicked') },
                   [
                     m(getIcon(), { iconName: 'hamburger', optionsMask: 'xwlxxh' }),

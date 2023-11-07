@@ -61,7 +61,7 @@ export function getProjectView({
 
             m(m.route.Link, {
               href: listPath,
-              selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3.mgn-b-2-0',
+              selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3-2.mgn-b-2-0',
             }, [
               m('i.fi-xnslxl-arrow-simple.dsp-flex', [
                 m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
@@ -84,7 +84,7 @@ export function getProjectView({
       if (href === '') {
         return null;
       }
-      const selector = 'a.typo-s-h2.sur-fg-3.link';
+      const selector = 'a.typo-s-h2.sur-fg-3-2.link';
       if (isExternal) {
         return m(selector, {
           href,

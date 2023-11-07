@@ -65,7 +65,7 @@ export default function getJourneyEntryView({
           ]),
           m(m.route.Link, {
             href: listPath,
-            selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3',
+            selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3-2',
           }, [
             m('i.fi-xnslxl-arrow-simple.dsp-flex', [
               m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),
@@ -110,7 +110,7 @@ function getTBDView(listPath: string) {
         ]),
         m(m.route.Link, {
           href: listPath,
-          selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3',
+          selector: 'a.dsp-flex.flx-a-c.link.sur-fg-3-2',
         }, [
           m('i.fi-xnslxl-arrow-simple.dsp-flex', [
             m(getIcon(), { iconName: 'arrow-simple', optionsMask: 'xnslxl' }),

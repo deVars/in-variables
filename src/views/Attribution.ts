@@ -20,7 +20,7 @@ function view() {
           m('', 'Friconix'),
           m('.typo-sub.typo-s-h4',
             'for the large collection of vector icons'),
-          m('a.typo-sub.typo-s-h4.sur-fg-3.link.dsp-flex', {
+          m('a.typo-sub.typo-s-h4.sur-fg-3-2.link.dsp-flex', {
             href: 'https://friconix.com/',
             target: '_blank',
           }, [
