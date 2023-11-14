@@ -1,6 +1,5 @@
 import m from 'https://cdn.jsdelivr.net/npm/mithril@2/+esm';
 import { type RouteEntry } from '../route.js';
-import getIcon from "./FriconixIcon";
 
 interface Footer {
   label: string;
