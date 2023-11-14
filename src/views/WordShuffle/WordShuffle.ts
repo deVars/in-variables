@@ -7,6 +7,7 @@ const Loading = getLoading();
 const tileSel = '.wid-1-0.pad-0-5.mgn-b-0-5.box-w-1.box-rad-0-25.box-s-s';
 const buttonSel = '.wid-4-0.dsp-b.sur-bg-100-h101.box-s-n.box-rad-0-25.pad-t-0-75.pad-b-0-75.pad-l-1-0.pad-r-1-0';
 
+const attemptCountsBeforeHints = 1;
 export default function getWordShuffle(): m.ClosureComponent {
   const sessionModel = getStrictAttributeModel<Session>(emptySession);
   const AttemptInputs = getAttemptInputs(sessionModel);
@@ -58,8 +59,8 @@ export default function getWordShuffle(): m.ClosureComponent {
             sessionModel.set(emptySession);
           },
         }),
-      (attempts.length === 3 && isChallengeOver)
-        || attempts.length < 3
+      (attempts.length === attemptCountsBeforeHints && isChallengeOver)
+        || attempts.length < attemptCountsBeforeHints
         || definitions.length === 0
         ? null
         : m(Definition, { session }),
@@ -367,7 +368,7 @@ function tryRefocusOnStartTile() {
   return true;
 }
 
-const attemptsLimit = 5;
+const attemptsLimit = 3;
 const challengeLimit = 3;
 function getCheckedAttemptStatus(
   isAttemptCorrect: boolean, attemptsCount: number, challengeCount: number,
